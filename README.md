@@ -2,7 +2,7 @@ DB Schema - https://app.eraser.io/workspace/JQTmLY7DeNnHtY4mIzDg
 
 Prisma ORM, Clerk as Auth, Next.js Frontend, Node.js Backend, REST or GraphQL.
 
-Order in how we will implement the Frontend
+Order in how we will implement the Frontend = 
 
 Auth 
 |
@@ -22,7 +22,7 @@ Group
 |
 Leaderboard
 
-Backend and DevOps
+Backend and DevOps = 
 Set up PostGres or MySQL
 |
 Set up Prisma
