@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,4 +5,112 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id
+  username      String
+  first_name    String
+  last_name     String
+  joinedAt      DateTime        @default(now())
+  posts         Post[]
+  following     Follow[]        @relation("UserFollowings")
+  followers     Follow[]        @relation("UserFollowers")
+  followRequestsSent     FollowRequest[] @relation("FollowRequestsSent")
+  followRequestsReceived FollowRequest[] @relation("FollowRequestsReceived")
+  blocks                 Block[]         @relation("BlocksSent")
+  blockedBy              Block[]         @relation("BlocksReceived")
+
+  likes         Like[]
+  comments      Comment[]
+  groupMemberships GroupMembership[]
+  deepWorkLogs  DeepWorkLog[]
+}
+
+model Block {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  blocker   User     @relation("BlocksSent", fields: [blockerId], references: [id], onDelete: Cascade)
+  blockerId String
+  blocked   User     @relation("BlocksReceived", fields: [blockedId], references: [id], onDelete: Cascade)
+  blockedId String
+
+  @@unique([blockerId, blockedId])
+}
+model Post {
+  id            Int            @id @default(autoincrement())
+  description   String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  userId        String
+  img           String?
+  video         String?
+  
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes         Like[]
+  comments      Comment[]
+}
+model Like {
+  id            Int           @id @default(autoincrement())
+  userId        String
+  postId        Int
+  createdAt     DateTime        @default(now())
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment       Comment?        @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId     Int?
+}
+model Comment {
+  id            Int           @id @default(autoincrement())
+  userId        String
+  postId        Int
+  description   String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post            @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likes         Like[]
+}
+model Follow {
+  id            String          @id @default(uuid())
+  followerId    String
+  followingId   String
+  createdAt     DateTime        @default(now())
+  follower      User            @relation("UserFollowings", fields: [followerId], references: [id])
+  following     User            @relation("UserFollowers", fields: [followingId], references: [id])
+}
+
+model FollowRequest {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  sender     User     @relation("FollowRequestsSent", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId   String
+  receiver   User     @relation("FollowRequestsReceived", fields: [receiverId], references: [id], onDelete: Cascade)
+  receiverId String
+
+  @@unique([senderId, receiverId])
+}
+
+model Group {
+  id            String          @id @default(uuid())
+  name          String
+  description   String
+  createdAt     DateTime        @default(now())
+  memberships   GroupMembership[]
+}
+
+model GroupMembership {
+  id            String          @id @default(uuid())
+  userId        String
+  groupId       String
+  user          User            @relation(fields: [userId], references: [id])
+  group         Group           @relation(fields: [groupId], references: [id])
+}
+
+model DeepWorkLog {
+  id            String          @id @default(uuid())
+  userId        String
+  hoursLogged   Float
+  logDate       DateTime
+  user          User            @relation(fields: [userId], references: [id])
 }
