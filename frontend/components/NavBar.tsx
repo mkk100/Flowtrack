@@ -67,6 +67,7 @@ export function NavBar() {
           <Button>
             <Link href="/sign-up">Sign In</Link>
           </Button>
+          <Button>hi</Button>
         </Group>
       </div>
     </header>
