@@ -95,8 +95,15 @@ export function NavBar() {
               </Button>
             </SignedIn>
             <SignedOut>
-              <div className="flex items-center gap-2 text-sm">
-                <Link href="/sign-in">Login/Register</Link>
+              <div>
+                <Link href="/sign-in">
+                  <Button variant="default" style={{ marginRight: "10px" }}>
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button variant="filled">Register</Button>
+                </Link>
               </div>
             </SignedOut>
           </ClerkLoaded>
