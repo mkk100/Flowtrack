@@ -5,7 +5,18 @@ import { IconSearch } from "@tabler/icons-react";
 import classes from "./HeaderSearch.module.css";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowsToEye } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowsToEye,
+  faBell,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  SignedIn,
+  SignedOut,
+  useClerk,
+} from "@clerk/nextjs";
 const links = [
   { link: "/about", label: "Home" },
   { link: "/pricing", label: "Track" },
@@ -14,7 +25,7 @@ const links = [
 
 export function NavBar() {
   const [opened, { toggle }] = useDisclosure(false);
-
+  const { signOut } = useClerk();
   const items = links.map((link) => (
     <a
       key={link.label}
@@ -62,11 +73,28 @@ export function NavBar() {
             visibleFrom="xs"
           />
         </Group>
-        <Group visibleFrom="sm">
-          <Button variant="default">Register</Button>
-          <Button>
-            <Link href="/sign-up">Sign In</Link>
-          </Button>
+        <Group className={classes.visibleFromSm}>
+          <ClerkLoading>
+            <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" />
+          </ClerkLoading>
+          <ClerkLoaded>
+            <SignedIn>
+              <div className="cursor-pointer">
+                <FontAwesomeIcon icon={faUsers} />
+              </div>
+              <div className="cursor-pointer">
+                <FontAwesomeIcon icon={faBell} />
+              </div>
+              <Button onClick={() => signOut({ redirectUrl: "/" })}>
+                Sign out
+              </Button>
+            </SignedIn>
+            <SignedOut>
+              <div className="flex items-center gap-2 text-sm">
+                <Link href="/sign-in">Login/Register</Link>
+              </div>
+            </SignedOut>
+          </ClerkLoaded>
         </Group>
       </div>
     </header>
