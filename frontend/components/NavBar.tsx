@@ -15,7 +15,9 @@ import {
   ClerkLoading,
   SignedIn,
   SignedOut,
+  useAuth,
   useClerk,
+  useUser,
 } from "@clerk/nextjs";
 const links = [
   { link: "/about", label: "Home" },
@@ -25,6 +27,8 @@ const links = [
 
 export function NavBar() {
   const [opened, { toggle }] = useDisclosure(false);
+  const { isLoaded, userId, sessionId, getToken } = useAuth();
+  const { user } = useUser();
   const { signOut } = useClerk();
   const items = links.map((link) => (
     <a
@@ -79,6 +83,7 @@ export function NavBar() {
           </ClerkLoading>
           <ClerkLoaded>
             <SignedIn>
+              {user?.fullName}
               <div className="cursor-pointer">
                 <FontAwesomeIcon icon={faUsers} />
               </div>
