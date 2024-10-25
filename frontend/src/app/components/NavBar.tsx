@@ -17,6 +17,8 @@ import {
   SignedOut,
   useAuth,
   useClerk,
+  UserButton,
+  UserProfile,
   useUser,
 } from "@clerk/nextjs";
 const links = [
@@ -55,26 +57,6 @@ export function NavBar() {
           <Group ml={50} gap={46} className={classes.links} visibleFrom="sm">
             {items}
           </Group>
-          <Autocomplete
-            className={classes.search}
-            placeholder="Search"
-            leftSection={
-              <IconSearch
-                style={{ width: rem(16), height: rem(16) }}
-                stroke={1.5}
-              />
-            }
-            data={[
-              "React",
-              "Angular",
-              "Vue",
-              "Next.js",
-              "Riot.js",
-              "Svelte",
-              "Blitz.js",
-            ]}
-            visibleFrom="xs"
-          />
         </Group>
         <Group className={classes.visibleFromSm}>
           <ClerkLoading>
@@ -82,16 +64,15 @@ export function NavBar() {
           </ClerkLoading>
           <ClerkLoaded>
             <SignedIn>
-              {user?.fullName}
-              <div className="cursor-pointer mr-4">
-                <FontAwesomeIcon icon={faUsers} />
+              <div className="flex justify-between gap-10">
+                <div className="cursor-pointer">
+                  <FontAwesomeIcon icon={faUsers} />
+                </div>
+                <div className="cursor-pointer">
+                  <FontAwesomeIcon icon={faBell} />
+                </div>
+                <UserButton />
               </div>
-              <div className="cursor-pointer">
-                <FontAwesomeIcon icon={faBell} />
-              </div>
-              <Button onClick={() => signOut({ redirectUrl: "/" })}>
-                Sign out
-              </Button>
             </SignedIn>
             <SignedOut>
               <div>
