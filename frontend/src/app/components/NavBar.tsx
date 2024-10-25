@@ -27,7 +27,6 @@ const links = [
 
 export function NavBar() {
   const [opened, { toggle }] = useDisclosure(false);
-  const { isLoaded, userId, sessionId, getToken } = useAuth();
   const { user } = useUser();
   const { signOut } = useClerk();
   const items = links.map((link) => (
@@ -84,7 +83,7 @@ export function NavBar() {
           <ClerkLoaded>
             <SignedIn>
               {user?.fullName}
-              <div className="cursor-pointer">
+              <div className="cursor-pointer mr-4">
                 <FontAwesomeIcon icon={faUsers} />
               </div>
               <div className="cursor-pointer">
@@ -97,7 +96,7 @@ export function NavBar() {
             <SignedOut>
               <div>
                 <Link href="/sign-in">
-                  <Button variant="default" style={{ marginRight: "10px" }}>
+                  <Button variant="default" mr={10}>
                     Log in
                   </Button>
                 </Link>
