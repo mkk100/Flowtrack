@@ -1,27 +1,10 @@
 "use client";
-import { Autocomplete, Group, Burger, rem, Button } from "@mantine/core";
+import { Group, Burger, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconSearch } from "@tabler/icons-react";
 import classes from "./HeaderSearch.module.css";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowsToEye,
-  faBell,
-  faUser,
-  faUsers,
-} from "@fortawesome/free-solid-svg-icons";
-import {
-  ClerkLoaded,
-  ClerkLoading,
-  SignedIn,
-  SignedOut,
-  useAuth,
-  useClerk,
-  UserButton,
-  UserProfile,
-  useUser,
-} from "@clerk/nextjs";
+import { faArrowsToEye } from "@fortawesome/free-solid-svg-icons";
 import RightMenu from "./RightMenu";
 const links = [
   { link: "/about", label: "Home" },
@@ -31,8 +14,6 @@ const links = [
 
 export function NavBar() {
   const [opened, { toggle }] = useDisclosure(false);
-
-  const { signOut } = useClerk();
   const items = links.map((link) => (
     <a
       key={link.label}
