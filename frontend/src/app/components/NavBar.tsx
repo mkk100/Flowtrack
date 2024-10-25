@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowsToEye,
   faBell,
+  faUser,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -21,6 +22,7 @@ import {
   UserProfile,
   useUser,
 } from "@clerk/nextjs";
+import RightMenu from "./RightMenu";
 const links = [
   { link: "/about", label: "Home" },
   { link: "/pricing", label: "Track" },
@@ -29,7 +31,7 @@ const links = [
 
 export function NavBar() {
   const [opened, { toggle }] = useDisclosure(false);
-  const { user } = useUser();
+
   const { signOut } = useClerk();
   const items = links.map((link) => (
     <a
@@ -43,7 +45,8 @@ export function NavBar() {
   ));
 
   return (
-    <header className={classes.header}>
+    // menu at the right that includes the user profile and sign out
+    <header className={classes.header + " item-center"}>
       <div className={classes.inner}>
         <Group>
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
@@ -52,42 +55,12 @@ export function NavBar() {
             <Link href="/">&nbsp;&nbsp;Flowtrac</Link>
           </Button>
         </Group>
-
         <Group>
           <Group ml={50} gap={46} className={classes.links} visibleFrom="sm">
             {items}
           </Group>
         </Group>
-        <Group className={classes.visibleFromSm}>
-          <ClerkLoading>
-            <div className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-solid border-current border-e-transparent align-[-0.125em] text-surface motion-reduce:animate-[spin_1.5s_linear_infinite] dark:text-white" />
-          </ClerkLoading>
-          <ClerkLoaded>
-            <SignedIn>
-              <div className="flex justify-between gap-10">
-                <div className="cursor-pointer">
-                  <FontAwesomeIcon icon={faUsers} />
-                </div>
-                <div className="cursor-pointer">
-                  <FontAwesomeIcon icon={faBell} />
-                </div>
-                <UserButton />
-              </div>
-            </SignedIn>
-            <SignedOut>
-              <div>
-                <Link href="/sign-in">
-                  <Button variant="default" mr={10}>
-                    Log in
-                  </Button>
-                </Link>
-                <Link href="/sign-up">
-                  <Button variant="filled">Register</Button>
-                </Link>
-              </div>
-            </SignedOut>
-          </ClerkLoaded>
-        </Group>
+        <RightMenu />
       </div>
     </header>
   );
