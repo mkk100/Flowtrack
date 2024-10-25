@@ -10,8 +10,6 @@ datasource db {
 model User {
   id            String          @id
   username      String
-  first_name    String
-  last_name     String
   joinedAt      DateTime        @default(now())
   posts         Post[]
   following     Follow[]        @relation("UserFollowings")

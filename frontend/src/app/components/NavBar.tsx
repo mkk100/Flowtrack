@@ -33,7 +33,7 @@ export function NavBar() {
           <Burger opened={opened} onClick={toggle} size="sm" hiddenFrom="sm" />
           <Button>
             <FontAwesomeIcon icon={faArrowsToEye} />
-            <Link href="/">&nbsp;&nbsp;Flowtrac</Link>
+            <Link href="/">&nbsp;&nbsp;Flowtrack</Link>
           </Button>
         </Group>
         <Group>

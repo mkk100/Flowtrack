@@ -3,6 +3,7 @@ import {
   ClerkLoading,
   SignedIn,
   SignedOut,
+  useClerk,
   useUser,
 } from "@clerk/nextjs";
 import { faUsers, faBell, faUser } from "@fortawesome/free-solid-svg-icons";
@@ -13,6 +14,8 @@ import classes from "./HeaderSearch.module.css";
 
 export default function RightMenu() {
   const { user } = useUser();
+  const { signOut } = useClerk();
+  
   return (
     <Group className={classes.visibleFromSm}>
       <ClerkLoading>
@@ -41,6 +44,9 @@ export default function RightMenu() {
               </Link>
             )}
           </div>
+          <button onClick={() => signOut({ redirectUrl: "/" })}>
+            Sign out
+          </button>
         </SignedIn>
         <SignedOut>
           <div>
