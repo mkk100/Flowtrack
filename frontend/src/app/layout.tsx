@@ -4,18 +4,7 @@ import "./globals.css";
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { ClerkProvider } from "@clerk/nextjs";
-import { NavBar } from "../../components/NavBar";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+import { NavBar } from "./components/NavBar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -33,9 +22,7 @@ export default function RootLayout({
         <head>
           <ColorSchemeScript />
         </head>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+        <body>
           <MantineProvider>
             <NavBar />
             {children}
