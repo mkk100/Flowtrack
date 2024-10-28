@@ -11,11 +11,14 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Headers", "Content-Type", "Authorization");
   next();
 });
+app.get("/test", (req, res) => {
+  res.json("test ok");
+});
 app.get("/users/:username", async (req, res) => {
   const { username } = req.params;
   try {
     const user = await prisma.user.findUnique({
-      where: { username: username},
+      where: { username: username },
     });
     res.status(200).json(user);
   } catch {
