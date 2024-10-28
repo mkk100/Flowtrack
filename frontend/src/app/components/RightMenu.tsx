@@ -26,7 +26,6 @@ export default function RightMenu() {
         const response = await axios.get(
           "http://localhost:4000/users/" + user?.username
         );
-        console.log(response.data.username);
         setUserName(response.data.username);
       } catch (error) {
         console.error("Error fetching data:", error);
