@@ -97,7 +97,7 @@ export async function POST(req: Request) {
   if (eventType === "user.updated") {
     try {
       const response = await axios.put(
-        "http://localhost:4000/users/:id",
+        "http://localhost:4000/users/:" + evt.data.id,
         {
           id: evt.data.id,
           username: JSON.parse(body).data.username,
