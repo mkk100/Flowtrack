@@ -4,8 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface UserProfile {
-    username: string;
-    avatar: string;
+  username: string;
+  avatar: string;
 }
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {
@@ -17,8 +17,6 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       const response = await axios.get(
         `http://localhost:4000/users/${username}`
       );
-
-    setData(response.data as UserProfile);
       setData(response.data);
     };
 
