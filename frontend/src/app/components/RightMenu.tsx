@@ -6,6 +6,7 @@ import {
   useClerk,
   useUser,
 } from "@clerk/nextjs";
+import Image from "next/image";
 import { faUsers, faBell, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Group } from "@mantine/core";
@@ -52,10 +53,13 @@ export default function RightMenu() {
             </div>
             {user && user.imageUrl ? (
               <Link href={"/profile/" + userName}>
-                <img
+                <Image
+                  loader={() => user.imageUrl}
                   src={user.imageUrl}
-                  alt="User Profile"
-                  className="h-8 w-8 rounded-full"
+                  alt="User Avatar"
+                  className="rounded-full"
+                  width={32}
+                  height={32}
                 />
               </Link>
             ) : (
