@@ -8,10 +8,9 @@ datasource db {
 }
 
 model User {
-  id            String          @id
-  username      String
-  first_name    String
-  last_name     String
+  id            String          @id 
+  username      String          @unique
+  avatar        String?
   joinedAt      DateTime        @default(now())
   posts         Post[]
   following     Follow[]        @relation("UserFollowings")

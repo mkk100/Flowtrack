@@ -3,16 +3,39 @@ import {
   ClerkLoading,
   SignedIn,
   SignedOut,
+  useClerk,
   useUser,
 } from "@clerk/nextjs";
+import Image from "next/image";
 import { faUsers, faBell, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Group } from "@mantine/core";
 import Link from "next/link";
 import classes from "./HeaderSearch.module.css";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function RightMenu() {
   const { user } = useUser();
+  const [userName, setUserName] = useState(null);
+  const { signOut } = useClerk();
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/users/" + user?.username
+        );
+        setUserName(response.data.username);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    if (user?.username) {
+      fetchUserName();
+    }
+  });
   return (
     <Group className={classes.visibleFromSm}>
       <ClerkLoading>
@@ -28,19 +51,25 @@ export default function RightMenu() {
               <FontAwesomeIcon icon={faBell} />
             </div>
             {user && user.imageUrl ? (
-              <Link href="/profile">
-                <img
+              <Link href={"/profile/" + userName}>
+                <Image
+                  loader={() => user.imageUrl}
                   src={user.imageUrl}
-                  alt="User Profile"
-                  className="h-8 w-8 rounded-full"
+                  alt="User Avatar"
+                  className="rounded-full"
+                  width={32}
+                  height={32}
                 />
               </Link>
             ) : (
-              <Link href="/profile">
+              <Link href={"/profile/" + userName}>
                 <FontAwesomeIcon icon={faUser} />
               </Link>
             )}
           </div>
+          <button onClick={() => signOut({ redirectUrl: "/" })}>
+            Sign out
+          </button>
         </SignedIn>
         <SignedOut>
           <div>
