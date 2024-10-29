@@ -1,12 +1,8 @@
 "use client";
+import { UserProfile } from "@/app/interface";
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-
-interface UserProfile {
-  username: string;
-  avatar: string;
-}
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {
   const { username } = params;

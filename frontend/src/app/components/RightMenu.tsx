@@ -45,7 +45,9 @@ export default function RightMenu() {
         <SignedIn>
           <div className="flex items-center justify-between gap-10">
             <div className="cursor-pointer">
-              <FontAwesomeIcon icon={faUsers} />
+              <Link href={"/friends"}>
+                <FontAwesomeIcon icon={faUsers} />
+              </Link>
             </div>
             <div className="cursor-pointer">
               <FontAwesomeIcon icon={faBell} />

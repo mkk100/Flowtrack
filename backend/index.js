@@ -25,6 +25,14 @@ app.get("/users/:username", async (req, res) => {
     res.status(400).json({ error: "can't find the data" });
   }
 });
+app.get("/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.status(200).json(users);
+  } catch {
+    res.status(400).json({ error: "can't find the data" });
+  }
+});
 app.post("/users", async (req, res) => {
   console.log(req.body.id);
   try {
@@ -33,6 +41,10 @@ app.post("/users", async (req, res) => {
         id: req.body.id.toString(),
         username: req.body.username,
         avatar: req.body.avatar,
+        followers: [],
+        following: [],
+        posts: [],
+        logs: [],
       },
     });
     res.status(200).json(user);
