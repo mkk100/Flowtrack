@@ -1,7 +1,9 @@
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const cors = require("cors");
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 
@@ -34,7 +36,6 @@ app.get("/users", async (req, res) => {
   }
 });
 app.post("/users", async (req, res) => {
-  console.log(req.body.id);
   try {
     const user = await prisma.user.create({
       data: {
@@ -52,7 +53,21 @@ app.post("/users", async (req, res) => {
     res.status(400).json({ error: "can't save the data" });
   }
 });
-
+app.post("/users/follow", async (req, res) => {
+  const { id, followingId } = req.body;
+  console.log(id.toString(),'hi', followingId.toString());
+  try {
+    await prisma.follow.create({
+      data: {
+      followerId: id.toString(),
+      followingId: followingId.toString(),
+      },
+    });
+    res.status(200);
+  } catch {
+    res.status(400).json({ error: "can't save the data" });
+  }
+});
 app.put("/users/:id", async (req, res) => {
   const { id } = req.params;
   try {
