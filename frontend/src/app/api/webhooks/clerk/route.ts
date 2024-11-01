@@ -52,26 +52,10 @@ export async function POST(req: Request) {
   // Do something with the payload
   // For this guide, you simply log the payload to the console
   const eventType = evt.type;
-  // console.log(`Webhook with and ID of ${id} and type of ${eventType}`)
-  // console.log('Webhook body:', body)
-
-  //   if (eventType === "user.created") {
-  //     try {
-  //       await prisma.user.create({
-  //         data: {
-  //           id: evt.data.id,
-  //           username: JSON.parse(body).data.username,
-  //           avatar: JSON.parse(body).data.image_url || "/noAvatar.png",
-  //         },
-  //       });
-  //       return new Response("User has been created!", { status: 200 });
-  //     } catch (err) {
-  //       console.log(err);
-  //       return new Response("Failed to create the user!", { status: 500 });
-  //     }
-  //   }
+  console.log("hi");
   if (eventType === "user.created") {
     try {
+      console.log("hiiii");
       const response = await axios.post(
         "http://localhost:4000/users",
         {

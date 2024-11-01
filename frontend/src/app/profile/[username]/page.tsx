@@ -1,57 +1,52 @@
 "use client";
 import { UserProfile } from "@/app/interface";
-import { useUser } from "@clerk/nextjs";
 import { Button } from "@mantine/core";
 import axios from "axios";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {
   const { username } = params;
-  const { user } = useUser();
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(
     null
   );
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
+  const [followed, setFollowed] = useState(false);
 
-  const fetchData = async () => {
-    if (currentProfile && currentUser) {
-      try {
-        const response = await axios.post(
-          `http://localhost:4000/users/follow`,
-          {
-            id: currentUser?.id,
-            followingId: currentProfile?.id,
+  const handleFollow = async () => {
+    try {
+      await axios.post(
+        `http://localhost:4000/users/follow`,
+        {
+          id: currentUser?.id,
+          followingId: currentProfile?.id,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log(response.data, "done");
-      } catch (error) {
-        console.error("Error following user:", error);
-      }
-    } else {
-      console.error("Error following user: User not found");
+        }
+      );
+      setFollowed(true);
+    } catch (error) {
+      console.error("Error following user:", error);
     }
   };
-  useEffect(() => {
+  const handleUnfollow = async () => {};
+  useMemo(() => {
     const fetchData = async () => {
       const response = await axios.get(
         `http://localhost:4000/users/${username}`
       );
       setCurrentProfile(response.data);
-
       const secondResponse = await axios.get(
-        `http://localhost:4000/users/${user?.username}`
+        `http://localhost:4000/users/${username}`
       );
       setCurrentUser(secondResponse.data);
     };
 
     fetchData();
-  });
+  }, [username]); // this is not getting executed
 
   if (!currentProfile) {
     return <div>Loading...</div>;
@@ -85,7 +80,13 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         </div>
       </div>
       <div>Deep Work Logs</div>
-      <Button onClick={fetchData}>Follow</Button>
+      {followed ? (
+        <Button variant="outline" onClick={handleUnfollow}>
+          Followed
+        </Button>
+      ) : (
+        <Button onClick={handleFollow}>Follow</Button>
+      )}
     </div>
   );
 };

@@ -55,12 +55,11 @@ app.post("/users", async (req, res) => {
 });
 app.post("/users/follow", async (req, res) => {
   const { id, followingId } = req.body;
-  console.log(id.toString(),'hi', followingId.toString());
   try {
     await prisma.follow.create({
       data: {
-      followerId: id.toString(),
-      followingId: followingId.toString(),
+        followerId: id.toString(),
+        followingId: followingId.toString(),
       },
     });
     res.status(200);

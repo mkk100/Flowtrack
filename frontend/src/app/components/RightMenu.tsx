@@ -12,30 +12,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Group } from "@mantine/core";
 import Link from "next/link";
 import classes from "./HeaderSearch.module.css";
-import axios from "axios";
-import { useEffect, useState } from "react";
 
 export default function RightMenu() {
   const { user } = useUser();
-  const [userName, setUserName] = useState(null);
   const { signOut } = useClerk();
 
-  useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/users/" + user?.username
-        );
-        setUserName(response.data.username);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    if (user?.username) {
-      fetchUserName();
-    }
-  });
   return (
     <Group className={classes.visibleFromSm}>
       <ClerkLoading>
@@ -53,7 +34,7 @@ export default function RightMenu() {
               <FontAwesomeIcon icon={faBell} />
             </div>
             {user && user.imageUrl ? (
-              <Link href={"/profile/" + userName}>
+              <Link href={"/profile/" + user?.username}>
                 <Image
                   loader={() => user.imageUrl}
                   src={user.imageUrl}
@@ -64,7 +45,7 @@ export default function RightMenu() {
                 />
               </Link>
             ) : (
-              <Link href={"/profile/" + userName}>
+              <Link href={"/profile/" + user?.username}>
                 <FontAwesomeIcon icon={faUser} />
               </Link>
             )}
