@@ -36,37 +36,68 @@ app.get("/users", async (req, res) => {
   }
 });
 app.post("/users", async (req, res) => {
+  const { id, username, avatar } = req.body;
   try {
+    const existingUser = await prisma.user.findUnique({
+      where: { id: id.toString() },
+    });
+
+    if (existingUser) {
+      return res.status(200).json("already exists");
+    }
+
     const user = await prisma.user.create({
       data: {
-        id: req.body.id.toString(),
-        username: req.body.username,
-        avatar: req.body.avatar,
-        followers: [],
-        following: [],
-        posts: [],
-        logs: [],
+        id: id.toString(),
+        username: username,
+        avatar: avatar,
       },
     });
     res.status(200).json(user);
   } catch {
-    res.status(400).json({ error: "can't save the data" });
+    res.status(400).json({ error: "can't save the data for account " });
   }
 });
 app.post("/users/follow", async (req, res) => {
   const { id, followingId } = req.body;
   try {
-    await prisma.follow.create({
+    const user = await prisma.follow.create({
       data: {
         followerId: id.toString(),
         followingId: followingId.toString(),
       },
     });
-    res.status(200);
+    res.status(200).json(user);
   } catch {
-    res.status(400).json({ error: "can't save the data" });
+    res.status(400).json({ error: "can't save the data for follow" });
   }
 });
+
+app.get("/users/followers/:id", async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    const followersCount = await prisma.follow.count({
+      where: { followingId: id.toString() },
+    });
+    res.status(200).json({ followers: followersCount });
+  } catch {
+    res.status(400).json({ error: "can't retrieve followers count" });
+  }
+});
+
+app.get("/users/followings", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const followingsCount = await prisma.follow.count({
+      where: { followerId: id.toString() },
+    });
+    res.status(200).json({ followings: followingsCount });
+  } catch {
+    res.status(400).json({ error: "can't retrieve followings count" });
+  }
+});
+
 app.put("/users/:id", async (req, res) => {
   const { id } = req.params;
   try {

@@ -1,19 +1,23 @@
 "use client";
 import { UserProfile } from "@/app/interface";
+import { useUser } from "@clerk/nextjs";
 import { Button } from "@mantine/core";
 import axios from "axios";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {
   const { username } = params;
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(
     null
   );
+  const { user } = useUser();
+  const [followerCount, setFollowerCount] = useState(0);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [followed, setFollowed] = useState(false);
 
   const handleFollow = async () => {
+    console.log(currentUser?.id, "hi", currentProfile?.id);
     try {
       await axios.post(
         `http://localhost:4000/users/follow`,
@@ -32,7 +36,19 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       console.error("Error following user:", error);
     }
   };
+  useEffect(() => {
+    const fetchFollower = async () => {
+      const response = await axios.get(
+        `http://localhost:4000/users/followers/` + currentProfile?.id
+      );
+      const followers = response.data;
+      console.log(followers);
+      setFollowerCount(followers["followers"]);
+    };
+    fetchFollower();
+  }, [currentProfile?.id]);
   const handleUnfollow = async () => {};
+
   useMemo(() => {
     const fetchData = async () => {
       const response = await axios.get(
@@ -40,13 +56,12 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       );
       setCurrentProfile(response.data);
       const secondResponse = await axios.get(
-        `http://localhost:4000/users/${username}`
+        `http://localhost:4000/users/${user?.username}`
       );
       setCurrentUser(secondResponse.data);
     };
-
     fetchData();
-  }, [username]); // this is not getting executed
+  }, [username, user?.username]); // this is not getting executed
 
   if (!currentProfile) {
     return <div>Loading...</div>;
@@ -71,7 +86,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               <div className="font-bold">6</div> logs
             </div>
             <div>
-              <div className="font-bold">15</div> following
+              <div className="font-bold">{followerCount}</div> following
             </div>
             <div>
               <div className="font-bold">300</div> followers
