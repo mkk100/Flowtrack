@@ -75,8 +75,8 @@ model Follow {
   followerId    String
   followingId   String
   createdAt     DateTime        @default(now())
-  follower      User            @relation("UserFollowings", fields: [followerId], references: [id])
-  following     User            @relation("UserFollowers", fields: [followingId], references: [id])
+  follower      User            @relation("UserFollowings", fields: [followerId], references: [id], onDelete: Cascade)
+  following     User            @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
 }
 
 model FollowRequest {
