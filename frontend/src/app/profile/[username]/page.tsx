@@ -35,6 +35,19 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       console.error("Error following user:", error);
     }
   };
+  const handleUnfollow = async () => {
+    try {
+      await axios.delete(`http://localhost:4000/users/unfollow`, {
+        data: {
+          id: currentUser?.id,
+          followingId: currentProfile?.id,
+        },
+      });
+      setFollowed(false);
+    } catch (error) {
+      console.error("Error unfollowing user:", error);
+    }
+  };
   useEffect(() => {
     const fetchFollower = async () => {
       const response = await axios.get(
@@ -45,7 +58,6 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
     };
     fetchFollower();
   }, [currentProfile?.id]);
-  const handleUnfollow = async () => {};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +69,11 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         `http://localhost:4000/users/${user?.username}`
       );
       setCurrentUser(secondResponse.data);
+    };
+    fetchData();
+  }, []); // this is not getting executed
+  useEffect(() => {
+    const fetchData = async () => {
       if (user?.username !== username) {
         const thirdResponse = await axios.get(
           `http://localhost:4000/users/followed/` +
@@ -71,7 +88,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       }
     };
     fetchData();
-  }, []); // this is not getting executed
+  }, [followed]);
 
   if (!currentProfile) {
     return <div>Loading...</div>;

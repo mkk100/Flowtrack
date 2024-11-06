@@ -72,6 +72,20 @@ app.post("/users/follow", async (req, res) => {
     res.status(400).json({ error: "can't save the data for follow" });
   }
 });
+app.delete("/users/unfollow", async (req, res) => {
+  const { id, followingId } = req.body;
+  try {
+    const follow = await prisma.follow.deleteMany({
+      where: {
+        followerId: id.toString(),
+        followingId: followingId.toString(),
+      },
+    });
+    res.status(200).json(follow);
+  } catch {
+    res.status(400).json({ error: "can't delete the follow data" });
+  }
+});
 app.get("/users/followed/:user/:guest", async (req, res) => {
   try {
     const follow = await prisma.follow
