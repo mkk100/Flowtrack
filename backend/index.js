@@ -72,6 +72,7 @@ app.post("/users/follow", async (req, res) => {
     res.status(400).json({ error: "can't save the data for follow" });
   }
 });
+
 app.delete("/users/unfollow", async (req, res) => {
   const { id, followingId } = req.body;
   try {
@@ -122,7 +123,7 @@ app.get("/users/followers/:id", async (req, res) => {
   }
 });
 
-app.get("/users/followings", async (req, res) => {
+app.get("/users/following/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const followingsCount = await prisma.follow.count({
