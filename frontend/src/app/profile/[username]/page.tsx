@@ -59,6 +59,10 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         `http://localhost:4000/users/${user?.username}`
       );
       setCurrentUser(secondResponse.data);
+      const thirdResponse = await axios.get(
+        `http://localhost:4000/users/followed/`+ user?.username + `/` + username
+      );
+      setFollowed(thirdResponse.data);
     };
     fetchData();
   }, [username, user?.username]); // this is not getting executed

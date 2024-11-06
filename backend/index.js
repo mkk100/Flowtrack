@@ -72,7 +72,30 @@ app.post("/users/follow", async (req, res) => {
     res.status(400).json({ error: "can't save the data for follow" });
   }
 });
-
+app.get("/users/followed/:user/:guest", async (req, res) => {
+  try {
+    const follow = await prisma.follow
+      .findFirst({
+        where: {
+          follower: {
+            username: req.params.user,
+          },
+          following: {
+            username: req.params.guest,
+          },
+        },
+      })
+      .then((data) => {
+        if (data) {
+          res.status(200).json({ isFollowing: true });
+        } else {
+          res.status(200).json({ isFollowing: false });
+        }
+      });
+  } catch {
+    res.status(400).json({ error: "can't check the follow status" });
+  }
+});
 app.get("/users/followers/:id", async (req, res) => {
   const { id } = req.params;
   console.log(id);

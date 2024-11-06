@@ -67,38 +67,13 @@ export async function POST(req: Request) {
           },
         }
       );
-      if (response.status !== 200) {
-        throw new Error("Failed to send data to backend");
-      }
+      return new Response("User has been created!", {
+        status: response.status,
+      });
     } catch (err) {
       console.log(err);
       return new Response(`Failed to ${eventType} the user!`, { status: 500 });
     }
   }
-  // if (eventType === "user.updated") {
-  //   try {
-  //     const response = await axios.put(
-  //       "http://localhost:4000/users/:" + evt.data.id,
-  //       {
-  //         id: evt.data.id,
-  //         username: JSON.parse(body).data.username,
-  //         avatar: JSON.parse(body).data.image_url || "/noAvatar.png",
-  //         eventType: eventType,
-  //       },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
-  //     if (response.status !== 200) {
-  //       throw new Error("Failed to send data to backend");
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //     return new Response(`Failed to update the user!`, { status: 500 });
-  //   }
-  // }
-
   return new Response("Webhook received", { status: 200 });
 }
