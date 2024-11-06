@@ -4,7 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import { Button } from "@mantine/core";
 import axios from "axios";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {
   const { username } = params;
@@ -15,9 +15,8 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [followerCount, setFollowerCount] = useState(0);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [followed, setFollowed] = useState(false);
-
+  const [followButton, setFollowButton] = useState(false);
   const handleFollow = async () => {
-    console.log(currentUser?.id, "hi", currentProfile?.id);
     try {
       await axios.post(
         `http://localhost:4000/users/follow`,
@@ -42,14 +41,13 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         `http://localhost:4000/users/followers/` + currentProfile?.id
       );
       const followers = response.data;
-      console.log(followers);
       setFollowerCount(followers["followers"]);
     };
     fetchFollower();
   }, [currentProfile?.id]);
   const handleUnfollow = async () => {};
 
-  useMemo(() => {
+  useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
         `http://localhost:4000/users/${username}`
@@ -59,13 +57,21 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         `http://localhost:4000/users/${user?.username}`
       );
       setCurrentUser(secondResponse.data);
-      const thirdResponse = await axios.get(
-        `http://localhost:4000/users/followed/`+ user?.username + `/` + username
-      );
-      setFollowed(thirdResponse.data);
+      if (user?.username !== username) {
+        const thirdResponse = await axios.get(
+          `http://localhost:4000/users/followed/` +
+            user?.username +
+            `/` +
+            username
+        );
+        setFollowed(thirdResponse.data["isFollowing"]);
+        setFollowButton(true);
+      } else {
+        setFollowButton(false);
+      }
     };
     fetchData();
-  }, [username, user?.username]); // this is not getting executed
+  }, []); // this is not getting executed
 
   if (!currentProfile) {
     return <div>Loading...</div>;
@@ -99,13 +105,15 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         </div>
       </div>
       <div>Deep Work Logs</div>
-      {followed ? (
-        <Button variant="outline" onClick={handleUnfollow}>
-          Followed
-        </Button>
-      ) : (
-        <Button onClick={handleFollow}>Follow</Button>
-      )}
+
+      {followButton &&
+        (followed ? (
+          <Button variant="outline" onClick={handleUnfollow}>
+            Followed
+          </Button>
+        ) : (
+          <Button onClick={handleFollow}>Follow</Button>
+        ))}
     </div>
   );
 };

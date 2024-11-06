@@ -98,7 +98,6 @@ app.get("/users/followed/:user/:guest", async (req, res) => {
 });
 app.get("/users/followers/:id", async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   try {
     const followersCount = await prisma.follow.count({
       where: { followingId: id.toString() },
