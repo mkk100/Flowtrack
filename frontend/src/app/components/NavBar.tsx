@@ -8,7 +8,7 @@ import { faArrowsToEye } from "@fortawesome/free-solid-svg-icons";
 import RightMenu from "./RightMenu";
 const links = [
   { link: "/about", label: "Home" },
-  { link: "/pricing", label: "Track" },
+  { link: "/track", label: "Track" },
   { link: "/learn", label: "Groups" },
 ];
 

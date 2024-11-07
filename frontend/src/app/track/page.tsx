@@ -1,13 +1,14 @@
 "use client";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button } from "@mantine/core";
+import { Button, Modal, Select, TextInput } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import React, { useState, useEffect } from "react";
 
 const Timer: React.FC = () => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
-
+  const [opened, { open, close }] = useDisclosure(false);
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isActive) {
@@ -60,11 +61,32 @@ const Timer: React.FC = () => {
           </Button>
         </div>
       </div>
+
+      <Modal opened={opened} onClose={close} title="Post" centered>
+        <TextInput
+          label="Description"
+          placeholder="Deep Work Session #1"
+          style={{ marginBottom: "1rem" }}
+        />
+        <Select
+          label="Deep Work Level"
+          placeholder="Pick value"
+          data={["1", "2", "3", "4", "5"]}
+          style={{ marginBottom: "1rem" }}
+        />
+        <Button color="blue" fullWidth>
+          Post
+        </Button>
+      </Modal>
       <Button
         style={{
           position: "fixed",
           bottom: "20px",
           right: "20px",
+        }}
+        onClick={() => {
+          setIsActive(false);
+          open();
         }}
       >
         Finish &nbsp;
