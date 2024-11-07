@@ -1,7 +1,7 @@
 "use client";
 import { UserProfile } from "@/app/interface";
 import { useUser } from "@clerk/nextjs";
-import { Button } from "@mantine/core";
+import { Button, Divider } from "@mantine/core";
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -16,6 +16,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [followed, setFollowed] = useState(false);
   const [followButton, setFollowButton] = useState(false);
+  const [followingCount, setFollowingCount] = useState(0);
   const handleFollow = async () => {
     try {
       await axios.post(
@@ -56,7 +57,15 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       const followers = response.data;
       setFollowerCount(followers["followers"]);
     };
+    const fetchFollowing = async () => {
+      const response = await axios.get(
+        `http://localhost:4000/users/following/` + currentProfile?.id
+      );
+      const following = response.data;
+      setFollowingCount(following["followings"]);
+    };
     fetchFollower();
+    fetchFollowing();
   }, [currentProfile?.id]);
 
   useEffect(() => {
@@ -95,7 +104,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   }
   return (
     <div className="pl-12">
-      <div className="flex pt-8 items-center">
+      <div className="flex pt-8 items-center pb-6">
         <Image
           loader={() => currentProfile.avatar}
           src={currentProfile.avatar}
@@ -105,32 +114,40 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
           height={150}
         />
         <div className="pl-16">
-          <div className="text-2xl capitalize pb-4">
-            {currentProfile.username}
+          <div className="text-2xl capitalize pb-4 flex gap-4">
+            <div>{currentProfile.username}</div>
+            <div>
+              {followButton &&
+                (followed ? (
+                  <Button
+                    variant="outline"
+                    onClick={handleUnfollow}
+                    className="h-8 w-26"
+                  >
+                    Followed
+                  </Button>
+                ) : (
+                  <Button onClick={handleFollow} className="h-8 w-24">
+                    Follow
+                  </Button>
+                ))}
+            </div>
           </div>
           <div className="flex justify-between gap-8 text-base">
             <div>
-              <div className="font-bold">6</div> logs
+              <span className="font-bold">6 </span>logs
             </div>
             <div>
-              <div className="font-bold">{followerCount}</div> following
+              <span className="font-bold">{followingCount} </span> following
             </div>
             <div>
-              <div className="font-bold">300</div> followers
+              <span className="font-bold">{followerCount} </span>followers
             </div>
           </div>
         </div>
       </div>
+      <Divider className="w-11/12" />
       <div>Deep Work Logs</div>
-
-      {followButton &&
-        (followed ? (
-          <Button variant="outline" onClick={handleUnfollow}>
-            Followed
-          </Button>
-        ) : (
-          <Button onClick={handleFollow}>Follow</Button>
-        ))}
     </div>
   );
 };
