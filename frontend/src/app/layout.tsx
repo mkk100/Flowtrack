@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
@@ -22,7 +21,7 @@ export default function RootLayout({
         <head>
           <ColorSchemeScript />
         </head>
-        <body>
+        <body className="h-screen overflow-hidden">
           <MantineProvider>
             <NavBar />
             {children}
