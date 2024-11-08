@@ -66,6 +66,7 @@ const Timer: React.FC = () => {
       console.log("Post submitted successfully:", response.status);
       close();
       reset();
+      alert("Post submitted successfully!");
     } catch (error) {
       console.error("Error submitting post:", error);
     }
