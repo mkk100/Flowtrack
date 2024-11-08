@@ -60,7 +60,6 @@ app.post("/users", async (req, res) => {
 });
 app.post("/posts", async (req, res) => {
   const { userId, description, level, duration } = req.body;
-  console.log(userId, description, level, duration);
   try {
     const post = await prisma.post.create({
       data: {

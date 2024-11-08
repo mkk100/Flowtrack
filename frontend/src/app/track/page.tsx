@@ -30,7 +30,6 @@ const Timer: React.FC = () => {
   }, [isActive, seconds]);
 
   useEffect(() => {
-    console.log(user);
     const fetchData = async () => {
       const secondResponse = await axios.get(
         `http://localhost:4000/users/${user?.username}`
@@ -38,7 +37,8 @@ const Timer: React.FC = () => {
       setUserId(secondResponse.data);
     };
     fetchData();
-  }, []);
+  }, [user?.username]);
+
   const toggle = () => {
     setIsActive(!isActive);
   };
@@ -65,6 +65,7 @@ const Timer: React.FC = () => {
       });
       console.log("Post submitted successfully:", response.status);
       close();
+      reset();
     } catch (error) {
       console.error("Error submitting post:", error);
     }
