@@ -1,5 +1,5 @@
 "use client";
-import { Group, Burger, Button } from "@mantine/core";
+import { Group, Burger } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import classes from "./HeaderSearch.module.css";
 import Link from "next/link";
@@ -7,9 +7,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowsToEye } from "@fortawesome/free-solid-svg-icons";
 import RightMenu from "./RightMenu";
 const links = [
-  { link: "/about", label: "Home" },
+  { link: "/", label: "Dashboard" },
   { link: "/track", label: "Track" },
-  { link: "/learn", label: "Groups" },
+  { link: "/group", label: "Groups" },
 ];
 
 export function NavBar() {
