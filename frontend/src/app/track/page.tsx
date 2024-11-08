@@ -1,14 +1,22 @@
 "use client";
+import { useUser } from "@clerk/nextjs";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Select, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { UserProfile } from "../interface";
 
 const Timer: React.FC = () => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
+  const [description, setDescription] = useState("Deep Work Session");
+  const [level, setLevel] = useState("1");
+  const [userId, setUserId] = useState<UserProfile | null>(null);
+  const { user } = useUser();
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isActive) {
@@ -21,6 +29,16 @@ const Timer: React.FC = () => {
     return () => clearInterval(interval!);
   }, [isActive, seconds]);
 
+  useEffect(() => {
+    console.log(user);
+    const fetchData = async () => {
+      const secondResponse = await axios.get(
+        `http://localhost:4000/users/${user?.username}`
+      );
+      setUserId(secondResponse.data);
+    };
+    fetchData();
+  }, []);
   const toggle = () => {
     setIsActive(!isActive);
   };
@@ -35,6 +53,21 @@ const Timer: React.FC = () => {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const secs = totalSeconds % 60;
     return `${hours}h ${minutes}m ${secs}s`;
+  };
+
+  const submitPost = async () => {
+    try {
+      const response = await axios.post("http://localhost:4000/posts", {
+        userId: userId?.id,
+        description: description,
+        level: level,
+        duration: Math.floor(seconds / 60),
+      });
+      console.log("Post submitted successfully:", response.status);
+      close();
+    } catch (error) {
+      console.error("Error submitting post:", error);
+    }
   };
 
   return (
@@ -67,14 +100,30 @@ const Timer: React.FC = () => {
           label="Description"
           placeholder="Deep Work Session #1"
           style={{ marginBottom: "1rem" }}
+          onChange={(event) => setDescription(event.currentTarget.value)}
+          required
         />
         <Select
           label="Deep Work Level"
           placeholder="Pick value"
           data={["1", "2", "3", "4", "5"]}
           style={{ marginBottom: "1rem" }}
+          onChange={(value) => {
+            setLevel(value !== null ? value : "1");
+          }}
+          required
         />
-        <Button color="blue" fullWidth>
+        <Button
+          color="blue"
+          onClick={() => {
+            if (seconds >= 2) {
+              submitPost();
+            } else {
+              alert("Session must be at least 1 minute long to post.");
+            }
+          }}
+          fullWidth
+        >
           Post
         </Button>
       </Modal>

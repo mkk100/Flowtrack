@@ -58,6 +58,23 @@ app.post("/users", async (req, res) => {
     res.status(400).json({ error: "can't save the data for account " });
   }
 });
+app.post("/posts", async (req, res) => {
+  const { userId, description, level, duration } = req.body;
+  console.log(userId, description, level, duration);
+  try {
+    const post = await prisma.post.create({
+      data: {
+        description: description.toString(),
+        deepWorkLevel: parseInt(level),
+        deepWorkDuration: parseInt(duration),
+        userId: userId.toString(),
+      },
+    });
+    res.status(200).json(post);
+  } catch {
+    res.status(400).json({ error: "can't save the post data" });
+  }
+});
 app.post("/users/follow", async (req, res) => {
   const { id, followingId } = req.body;
   try {
