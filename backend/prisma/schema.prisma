@@ -39,6 +39,8 @@ model Block {
 model Post {
   id            Int            @id @default(autoincrement())
   description   String
+  deepWorkDuration Int
+  deepWorkLevel Int
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   userId        String
