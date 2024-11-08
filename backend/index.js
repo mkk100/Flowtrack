@@ -138,7 +138,23 @@ app.get("/users/followers/:id", async (req, res) => {
     res.status(400).json({ error: "can't retrieve followers count" });
   }
 });
-
+app.get("/posts", async (req, res) => {
+  try {
+    const posts = await prisma.post.findMany({
+      include: {
+        user: {
+          select: {
+            username: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+    res.status(200).json(posts);
+  } catch {
+    res.status(400).json({ error: "can't retrieve the posts" });
+  }
+});
 app.get("/users/following/:id", async (req, res) => {
   const { id } = req.params;
   try {

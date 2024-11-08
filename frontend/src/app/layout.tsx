@@ -21,7 +21,7 @@ export default function RootLayout({
         <head>
           <ColorSchemeScript />
         </head>
-        <body className="h-screen overflow-hidden">
+        <body className="h-screen overflow-hidden bg-slate-50">
           <MantineProvider>
             <NavBar />
             {children}

@@ -7,8 +7,10 @@ export interface UserProfile {
   logs?: [];
 }
 
-export interface PostSchema{
+export interface PostSchema {
   id: string;
+  username: string;
+  avatar: string;
   userId: string;
   description: string;
   level: string;
