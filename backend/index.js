@@ -74,6 +74,38 @@ app.post("/posts", async (req, res) => {
     res.status(400).json({ error: "can't save the post data" });
   }
 });
+app.post("/groups", async (req, res) => {
+  const { groupName, groupDescription, user } = req.body;
+  try {
+    const group = await prisma.group.create({
+      data: {
+        name: groupName,
+        description: groupDescription,
+      },
+    });
+    const userRecord = await prisma.user.findUnique({
+      where: { username: user },
+    });
+
+    if (!userRecord) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    const groupMember = await prisma.groupMembership.create({
+      data: {
+        groupId: group.id,
+        userId: userRecord.id,
+      },
+    });
+
+    res.status(200).json({ group, groupMember });
+  } catch {
+    res.status(400).json({ error: "can't save the group data" });
+  }
+});
+app.get("/addAdmin", async (req, res) => {
+  const { user } = req.body;
+});
 app.post("/users/follow", async (req, res) => {
   const { id, followingId } = req.body;
   try {

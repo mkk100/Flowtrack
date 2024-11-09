@@ -1,7 +1,5 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Select, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
@@ -87,7 +85,7 @@ const Timer: React.FC = () => {
               isActive ? "active" : "inactive"
             }`}
             onClick={toggle}
-            color={isActive ? "yellow" : "blue"}
+            color={isActive ? "yellow" : "black"}
           >
             {isActive ? "Pause" : "Start"}
           </Button>
@@ -116,7 +114,7 @@ const Timer: React.FC = () => {
           required
         />
         <Button
-          color="blue"
+          color="black"
           onClick={() => {
             if (seconds >= 2) {
               submitPost();
@@ -139,9 +137,9 @@ const Timer: React.FC = () => {
           setIsActive(false);
           open();
         }}
+        color="black"
       >
-        Finish &nbsp;
-        <FontAwesomeIcon icon={faArrowRight} />
+        Finish
       </Button>
     </div>
   );
