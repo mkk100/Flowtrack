@@ -35,6 +35,7 @@ app.get("/users", async (req, res) => {
     res.status(400).json({ error: "can't find the data" });
   }
 });
+
 app.post("/users", async (req, res) => {
   const { id, username, avatar } = req.body;
   try {
@@ -72,6 +73,21 @@ app.post("/posts", async (req, res) => {
     res.status(200).json(post);
   } catch {
     res.status(400).json({ error: "can't save the post data" });
+  }
+});
+app.post("/deepWorkLogs", async (req, res) => {
+  const { userId, minutesLogged, deepWorkLevel } = req.body;
+  try {
+    const deepWorkLog = await prisma.deepWorkLog.create({
+      data: {
+        userId: userId.toString(),
+        minutesLogged: parseInt(minutesLogged),
+        deepWorkLevel: parseInt(deepWorkLevel),
+      },
+    });
+    res.status(200).json(deepWorkLog);
+  } catch {
+    res.status(400).json({ error: "can't save the deep work log data" });
   }
 });
 app.post("/groups", async (req, res) => {
@@ -156,6 +172,57 @@ app.post("/users/follow", async (req, res) => {
     res.status(200).json(user);
   } catch {
     res.status(400).json({ error: "can't save the data for follow" });
+  }
+});
+
+app.get("/deepWorkLogs/:groupId", async (req, res) => {
+  const { groupId } = req.params;
+  try {
+    const group = await prisma.group.findUnique({
+      where: { id: groupId.toString() },
+      include: {
+        memberships: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    if (!group) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+    const stats = await Promise.all(
+      group.memberships.map(async (membership) => {
+        const logs = await prisma.deepWorkLog.findMany({
+          where: {
+            userId: membership.userId.toString(),
+            logDate: {
+              gte: new Date(new Date().setDate(new Date().getDate() - 7)),
+            },
+          },
+        });
+
+        const totalMinutes = logs.reduce(
+          (acc, log) => acc + log.minutesLogged,
+          0
+        );
+        const averageLevel =
+          logs.length > 0
+            ? logs.reduce((acc, log) => acc + log.deepWorkLevel, 0) /
+              logs.length
+            : 0;
+
+        return {
+          username: membership.user.username,
+          totalMinutes: totalMinutes,
+          averageDeepWorkLevel: averageLevel,
+        };
+      })
+    );
+
+    res.status(200).json(stats);
+  } catch {
+    res.status(400).json({ error: "can't retrieve the deep work stats" });
   }
 });
 

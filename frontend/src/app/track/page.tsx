@@ -62,12 +62,23 @@ const Timer: React.FC = () => {
         duration: Math.floor(seconds / 60),
       });
       console.log("Post submitted successfully:", response.status);
-      close();
-      reset();
-      alert("Post submitted successfully!");
     } catch (error) {
       console.error("Error submitting post:", error);
     }
+
+    try {
+      const response2 = await axios.post("http://localhost:4000/deepWorkLogs", {
+        userId: userId?.id,
+        minutesLogged: Math.floor(seconds / 60),
+        deepWorkLevel: level,
+      });
+      console.log("Deep work log submitted successfully:", response2.status);
+    } catch (error) {
+      console.error("Error submitting deep work log:", error);
+    }
+    close();
+    reset();
+    alert("Post submitted successfully!");
   };
 
   return (
