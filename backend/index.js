@@ -119,6 +119,38 @@ app.post("/groups", async (req, res) => {
     res.status(400).json({ error: "can't save the group data" });
   }
 });
+app.post("/groups/:groupId/memberships", async (req, res) => {
+  const { groupId } = req.params;
+  const { userName } = req.body;
+  try {
+    const group = await prisma.group.findUnique({
+      where: { id: groupId.toString() },
+    });
+
+    if (!group) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { username: userName },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const membership = await prisma.groupMembership.create({
+      data: {
+        groupId: groupId.toString(),
+        userId: user.id.toString(),
+      },
+    });
+
+    res.status(200).json(membership);
+  } catch {
+    res.status(400).json({ error: "can't add the membership" });
+  }
+});
 app.get("/groups", async (req, res) => {
   try {
     const groups = await prisma.group.findMany({
