@@ -4,6 +4,7 @@ import { Button, Modal, Textarea, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import { useState } from "react";
+import GroupViewLists from "../components/GroupViewLists";
 
 const GroupPage = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -38,6 +39,7 @@ const GroupPage = () => {
           <Textarea
             label="Group Description"
             placeholder="A group for deep work sessions"
+            maxLength={50}
             required
             className="mb-4"
             onChange={(event) => setGroupDescription(event.currentTarget.value)}
@@ -63,6 +65,7 @@ const GroupPage = () => {
           Create a group
         </Button>
       </div>
+      <GroupViewLists />
     </div>
   );
 };

@@ -18,3 +18,11 @@ export interface PostSchema {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface Groups {
+  name: string;
+  createdAt: string;
+  description: string;
+  id: string;
+  memberships: string[];
+}

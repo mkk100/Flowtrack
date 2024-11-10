@@ -103,6 +103,44 @@ app.post("/groups", async (req, res) => {
     res.status(400).json({ error: "can't save the group data" });
   }
 });
+app.get("/groups", async (req, res) => {
+  try {
+    const groups = await prisma.group.findMany({
+      include: {
+        memberships: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    res.status(200).json(groups);
+  } catch {
+    res.status(400).json({ error: "can't retrieve the groups" });
+  }
+});
+app.get("/groups/:groupId", async (req, res) => {
+  const { groupId } = req.params;
+  try {
+    const group = await prisma.group.findUnique({
+      where: { id: groupId.toString() },
+      include: {
+        memberships: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+    if (group) {
+      res.status(200).json(group);
+    } else {
+      res.status(404).json({ error: "Group not found" });
+    }
+  } catch {
+    res.status(400).json({ error: "can't retrieve the group" });
+  }
+});
 app.get("/addAdmin", async (req, res) => {
   const { user } = req.body;
 });
