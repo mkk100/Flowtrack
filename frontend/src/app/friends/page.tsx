@@ -19,6 +19,7 @@ export default function FriendsPage() {
         overflowY: "auto",
         padding: "20px",
       }}
+      className="overflow-y-auto h-screen pb-16"
     >
       <h1 style={{ textAlign: "center", marginBottom: "20px" }}>Suggested</h1>
       <div

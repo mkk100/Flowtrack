@@ -12,11 +12,16 @@ export default function Home() {
     });
   }, []);
   return (
-    <div className="flex justify-center items-center mt-12">
-      <div className="w-full max-w-2xl">
-        {posts.map((post) => (
-          <Post key={post.id} {...post} />
-        ))}
+    <div className="flex flex-col items-center pt-8">
+      <div
+        className="overflow-y-auto h-screen pb-20 pr-4"
+        style={{ width: "32rem" }}
+      >
+        <div className="w-full max-w-2xl">
+          {posts.map((post) => (
+            <Post key={post.id} {...post} />
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ const GroupPage = () => {
   };
 
   return (
-    <div className="pt-6 p-32">
+    <div className="pt-6 p-32 overflow-y-auto h-screen pb-16">
       <div className="flex justify-between">
         <div className="font-bold">Groups</div>
         <Modal opened={opened} onClose={close} title="Create a group" centered>
