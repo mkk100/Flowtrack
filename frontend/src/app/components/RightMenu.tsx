@@ -7,7 +7,7 @@ import {
   useUser,
 } from "@clerk/nextjs";
 import Image from "next/image";
-import { faUsers, faBell, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faUsers, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Group } from "@mantine/core";
 import Link from "next/link";
@@ -29,9 +29,6 @@ export default function RightMenu() {
               <Link href={"/friends"}>
                 <FontAwesomeIcon icon={faUsers} />
               </Link>
-            </div>
-            <div className="cursor-pointer">
-              <FontAwesomeIcon icon={faBell} />
             </div>
             {user && user.imageUrl ? (
               <Link href={"/profile/" + user?.username}>

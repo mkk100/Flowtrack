@@ -1,7 +1,5 @@
 "use client";
 import { useUser } from "@clerk/nextjs";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Modal, Select, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
@@ -64,12 +62,23 @@ const Timer: React.FC = () => {
         duration: Math.floor(seconds / 60),
       });
       console.log("Post submitted successfully:", response.status);
-      close();
-      reset();
-      alert("Post submitted successfully!");
     } catch (error) {
       console.error("Error submitting post:", error);
     }
+
+    try {
+      const response2 = await axios.post("http://localhost:4000/deepWorkLogs", {
+        userId: userId?.id,
+        minutesLogged: Math.floor(seconds / 60),
+        deepWorkLevel: level,
+      });
+      console.log("Deep work log submitted successfully:", response2.status);
+    } catch (error) {
+      console.error("Error submitting deep work log:", error);
+    }
+    close();
+    reset();
+    alert("Post submitted successfully!");
   };
 
   return (
@@ -87,7 +96,7 @@ const Timer: React.FC = () => {
               isActive ? "active" : "inactive"
             }`}
             onClick={toggle}
-            color={isActive ? "yellow" : "blue"}
+            color={isActive ? "yellow" : "black"}
           >
             {isActive ? "Pause" : "Start"}
           </Button>
@@ -116,7 +125,7 @@ const Timer: React.FC = () => {
           required
         />
         <Button
-          color="blue"
+          color="black"
           onClick={() => {
             if (seconds >= 2) {
               submitPost();
@@ -139,9 +148,9 @@ const Timer: React.FC = () => {
           setIsActive(false);
           open();
         }}
+        color="black"
       >
-        Finish &nbsp;
-        <FontAwesomeIcon icon={faArrowRight} />
+        Finish
       </Button>
     </div>
   );

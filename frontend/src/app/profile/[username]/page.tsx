@@ -66,7 +66,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
     };
     fetchFollower();
     fetchFollowing();
-  }, [currentProfile?.id]);
+  }, [currentProfile?.id, followed]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -123,11 +123,16 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                     variant="outline"
                     onClick={handleUnfollow}
                     className="h-8 w-26"
+                    color="black"
                   >
                     Followed
                   </Button>
                 ) : (
-                  <Button onClick={handleFollow} className="h-8 w-24">
+                  <Button
+                    onClick={handleFollow}
+                    className="h-8 w-24"
+                    color="black"
+                  >
                     Follow
                   </Button>
                 ))}

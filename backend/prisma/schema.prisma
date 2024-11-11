@@ -11,6 +11,7 @@ model User {
   id            String          @id 
   username      String          @unique
   avatar        String?
+  description  String?
   joinedAt      DateTime        @default(now())
   posts         Post[]
   following     Follow[]        @relation("UserFollowings")
@@ -111,7 +112,8 @@ model GroupMembership {
 model DeepWorkLog {
   id            String          @id @default(uuid())
   userId        String
-  hoursLogged   Float
-  logDate       DateTime
+  minutesLogged   Float
+  deepWorkLevel Int
+  logDate       DateTime      @default(now())
   user          User            @relation(fields: [userId], references: [id])
 }
