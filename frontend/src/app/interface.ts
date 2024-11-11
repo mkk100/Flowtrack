@@ -9,14 +9,18 @@ export interface UserProfile {
 
 export interface PostSchema {
   id: string;
-  username: string;
-  avatar: string;
-  userId: string;
   description: string;
-  level: string;
-  duration: number;
+  deepWorkDuration: number;
+  deepWorkLevel: number;
   createdAt: string;
   updatedAt: string;
+  userId: string;
+  img?: string | null;
+  video?: string | null;
+  user: {
+    username: string;
+    avatar: string;
+  };
 }
 
 export interface Groups {
@@ -31,13 +35,21 @@ export interface GroupResponse {
   groupId: string;
   id: string;
   userId: string;
-  group: Group;
+  group: {
+    name: string;
+    description: string;
+    _count: {
+      memberships: number;
+    };
+  };
 }
-export interface Group {
-  name: string;
+
+export interface UnjoinedGroupResponse {
   description: string;
-  _count: Membership;
-}
-export interface Membership {
-  memberships: number;
+  id: string;
+  name: string;
+
+  _count: {
+    memberships: number;
+  };
 }
