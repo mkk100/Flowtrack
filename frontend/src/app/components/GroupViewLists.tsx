@@ -52,7 +52,7 @@ export default function GroupViewLists() {
           <Tabs.Tab value="theRest">Groups To Join</Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="joined">
-          <div className="flex flex-col space-y-4 pt-8">
+          <div className="flex flex-col space-y-4 pt-4">
             {joinedGroups.map((group) => (
               <div
                 key={group.groupId}
@@ -93,7 +93,7 @@ export default function GroupViewLists() {
           </div>
         </Tabs.Panel>
         <Tabs.Panel value="theRest">
-          <div className="flex flex-col space-y-4 pt-8">
+          <div className="flex flex-col space-y-4 pt-4">
             {unjoinedGroups.length === 0 ? (
               <div className="text-center text-gray-600">
                 You have joined every group
