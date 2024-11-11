@@ -19,16 +19,18 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
   const [rowData, setRowData] = useState([]);
   useEffect(() => {
     const fetchData = async () => {
-      const info = await axios.get(
-        `http://localhost:4000/groups/${params.groupId}`
-      );
-      setGroupInfo(info.data);
-      console.log(info.data);
-      const calculations = await axios.get(
-        `http://localhost:4000/deepWorkLogs/${params.groupId}`
-      );
-      console.log(calculations.data);
-      setRowData(calculations.data);
+      try {
+        const info = await axios.get(
+          `http://localhost:4000/groups/${params.groupId}`
+        );
+        setGroupInfo(info.data);
+        const calculations = await axios.get(
+          `http://localhost:4000/deepWorkLogs/${params.groupId}`
+        );
+        setRowData(calculations.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
     fetchData();
   }, [params.groupId]);

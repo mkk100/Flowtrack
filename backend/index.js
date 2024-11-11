@@ -151,20 +151,77 @@ app.post("/groups/:groupId/memberships", async (req, res) => {
     res.status(400).json({ error: "can't add the membership" });
   }
 });
-app.get("/groups", async (req, res) => {
+
+app.get("/users/:username/groups", async (req, res) => {
+  const { username } = req.params;
   try {
-    const groups = await prisma.group.findMany({
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const memberships = await prisma.groupMembership.findMany({
+      where: { userId: user.id.toString() },
       include: {
-        memberships: {
-          include: {
-            user: true,
+        group: {
+          select: {
+            name: true,
+            description: true,
+            _count: {
+              select: { memberships: true },
+            },
           },
         },
       },
     });
-    res.status(200).json(groups);
+
+    res.status(200).json(memberships);
   } catch {
-    res.status(400).json({ error: "can't retrieve the groups" });
+    res
+      .status(400)
+      .json({ error: "can't retrieve the groups and memberships" });
+  }
+});
+app.get("/users/:username/available-groups", async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userGroups = await prisma.groupMembership.findMany({
+      where: { userId: user.id.toString() },
+      select: { groupId: true },
+    });
+
+    const userGroupIds = userGroups.map((membership) => membership.groupId);
+
+    const availableGroups = await prisma.group.findMany({
+      where: {
+        id: {
+          notIn: userGroupIds,
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        _count: {
+          select: { memberships: true },
+        },
+      },
+    });
+
+    res.status(200).json(availableGroups);
+  } catch {
+    res.status(400).json({ error: "can't retrieve available groups" });
   }
 });
 app.get("/groups/:groupId", async (req, res) => {

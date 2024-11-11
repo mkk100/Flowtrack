@@ -34,6 +34,7 @@ const GroupPage = () => {
             placeholder="Deep Work Group"
             style={{ marginBottom: "1rem" }}
             required
+            maxLength={50}
             onChange={(event) => setGroupName(event.currentTarget.value)}
           />
           <Textarea
