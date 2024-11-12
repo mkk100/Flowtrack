@@ -76,11 +76,13 @@ app.post("/posts", async (req, res) => {
   }
 });
 app.post("/deepWorkLogs", async (req, res) => {
-  const { userId, minutesLogged, deepWorkLevel } = req.body;
+  console.log(req.body);
+  const { userId, description, minutesLogged, deepWorkLevel } = req.body;
   try {
     const deepWorkLog = await prisma.deepWorkLog.create({
       data: {
         userId: userId.toString(),
+        description: description,
         minutesLogged: parseInt(minutesLogged),
         deepWorkLevel: parseInt(deepWorkLevel),
       },
@@ -88,6 +90,26 @@ app.post("/deepWorkLogs", async (req, res) => {
     res.status(200).json(deepWorkLog);
   } catch {
     res.status(400).json({ error: "can't save the deep work log data" });
+  }
+});
+app.get("/users/:username/deepWorkLogs", async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const deepWorkLogs = await prisma.deepWorkLog.findMany({
+      where: { userId: user.id.toString() },
+    });
+
+    res.status(200).json(deepWorkLogs);
+  } catch {
+    res.status(400).json({ error: "can't retrieve the deep work logs" });
   }
 });
 app.post("/groups", async (req, res) => {

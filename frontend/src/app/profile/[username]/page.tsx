@@ -1,5 +1,5 @@
 "use client";
-import { UserProfile } from "@/app/interface";
+import { DeepWorkLogs, UserProfile } from "@/app/interface";
 import { useUser } from "@clerk/nextjs";
 import { Button, Divider } from "@mantine/core";
 import axios from "axios";
@@ -17,6 +17,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [followed, setFollowed] = useState(false);
   const [followButton, setFollowButton] = useState(false);
   const [followingCount, setFollowingCount] = useState(0);
+  const [deepWorkLogs, setDeepWorkLogs] = useState<DeepWorkLogs[]>();
   const handleFollow = async () => {
     try {
       await axios.post(
@@ -64,8 +65,16 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       const following = response.data;
       setFollowingCount(following["followings"]);
     };
+    const fetchDeepWorkLogs = async () => {
+      const response = await axios.get(
+        `http://localhost:4000/users/${user?.username}/deepWorkLogs`
+      );
+      console.log(response.data);
+      setDeepWorkLogs(response.data);
+    };
     fetchFollower();
     fetchFollowing();
+    fetchDeepWorkLogs();
   }, [currentProfile?.id, followed]);
 
   useEffect(() => {
@@ -152,7 +161,24 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         </div>
       </div>
       <Divider className="w-11/12" />
-      <div>Deep Work Logs</div>
+      <div className="mt-8">
+        <div className="text-xl font-bold mb-4">Deep Work Logs</div>
+        {deepWorkLogs?.map((log) => (
+          <div
+            key={log.id}
+            className="flex flex-col md:flex-row items-start md:items-center gap-4 p-4 border-b border-gray-200"
+          >
+            <div className="text-lg font-semibold text-blue-600">
+              {log.minutesLogged} minutes
+            </div>
+            <div className="text-sm text-gray-600">{log.deepWorkLevel}</div>
+            <div className="text-sm text-gray-500">
+              {new Date(log.logDate).toLocaleDateString()}
+            </div>
+            <div className="text-sm text-gray-700">{log.description}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

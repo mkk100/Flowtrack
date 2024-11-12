@@ -113,6 +113,7 @@ model DeepWorkLog {
   id            String          @id @default(uuid())
   userId        String
   minutesLogged   Float
+  description  String
   deepWorkLevel Int
   logDate       DateTime      @default(now())
   user          User            @relation(fields: [userId], references: [id])

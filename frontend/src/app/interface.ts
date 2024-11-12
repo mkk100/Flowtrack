@@ -53,3 +53,12 @@ export interface UnjoinedGroupResponse {
     memberships: number;
   };
 }
+
+export interface DeepWorkLogs {
+  id: string;
+  userId: string;
+  description: string;
+  minutesLogged: number;
+  deepWorkLevel: number;
+  logDate: string;
+}
