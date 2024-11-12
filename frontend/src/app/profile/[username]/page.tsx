@@ -163,21 +163,23 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       <Divider className="w-11/12" />
       <div className="mt-8">
         <div className="text-xl font-bold mb-4">Deep Work Logs</div>
-        {deepWorkLogs?.map((log) => (
-          <div
-            key={log.id}
-            className="flex flex-col md:flex-row items-start md:items-center gap-4 p-4 border-b border-gray-200"
-          >
-            <div className="text-lg font-semibold text-blue-600">
-              {log.minutesLogged} minutes
+        <div className="overflow-y-auto h-screen pb-20 pr-4">
+          {deepWorkLogs?.map((log) => (
+            <div
+              key={log.id}
+              className="flex flex-col md:flex-row items-start md:items-center gap-4 p-4 border-b border-gray-200"
+            >
+              <div className="text-lg font-semibold text-blue-600">
+                {log.minutesLogged} minutes
+              </div>
+              <div className="text-sm text-gray-600">{log.deepWorkLevel}</div>
+              <div className="text-sm text-gray-500">
+                {new Date(log.logDate).toLocaleDateString()}
+              </div>
+              <div className="text-sm text-gray-700">{log.description}</div>
             </div>
-            <div className="text-sm text-gray-600">{log.deepWorkLevel}</div>
-            <div className="text-sm text-gray-500">
-              {new Date(log.logDate).toLocaleDateString()}
-            </div>
-            <div className="text-sm text-gray-700">{log.description}</div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
