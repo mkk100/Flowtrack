@@ -69,6 +69,7 @@ const Timer: React.FC = () => {
     try {
       const response2 = await axios.post("http://localhost:4000/deepWorkLogs", {
         userId: userId?.id,
+        description: description,
         minutesLogged: Math.floor(seconds / 60),
         deepWorkLevel: level,
       });

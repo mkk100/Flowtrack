@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { GroupResponse } from "../interface";
+import { GroupResponse, UnjoinedGroupResponse } from "../interface";
 import { Button, Modal, Tabs } from "@mantine/core";
 import { useRouter } from "next/navigation";
 import { useDisclosure } from "@mantine/hooks";
@@ -8,7 +8,9 @@ import { useUser } from "@clerk/nextjs";
 
 export default function GroupViewLists() {
   const [joinedGroups, setJoinedGroups] = useState<GroupResponse[]>([]);
-  const [unjoinedGroups, setUnjoinedGroups] = useState<GroupResponse[]>([]);
+  const [unjoinedGroups, setUnjoinedGroups] = useState<UnjoinedGroupResponse[]>(
+    []
+  );
   const [opened, { open, close }] = useDisclosure(false);
   const router = useRouter();
   const { user } = useUser();
@@ -134,7 +136,6 @@ export default function GroupViewLists() {
                       <Button
                         color="black"
                         onClick={() => {
-                          console.log(group.id);
                           handleJoinGroup(group.id);
                         }}
                       >
