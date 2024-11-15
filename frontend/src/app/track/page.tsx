@@ -5,16 +5,21 @@ import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { UserProfile } from "../interface";
-
+import { useNavigationGuard } from "next-navigation-guard";
 const Timer: React.FC = () => {
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [opened, { open, close }] = useDisclosure(false);
+  const [enabled] = useState(true);
   const [description, setDescription] = useState("Deep Work Session");
   const [level, setLevel] = useState("1");
   const [userId, setUserId] = useState<UserProfile | null>(null);
   const { user } = useUser();
-
+  const navGuard = useNavigationGuard({
+    enabled: enabled && isActive,
+    confirm: () =>
+      window.confirm("Your progress won't be saved. Do you want to leave?"),
+  });
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
     if (isActive) {
@@ -153,6 +158,23 @@ const Timer: React.FC = () => {
       >
         Finish
       </Button>
+      {navGuard.active && (
+        <Modal
+          opened={navGuard.active}
+          onClose={close}
+          title="Are you sure you want to leave?"
+          centered
+        >
+          <div className="flex justify-end space-x-4">
+            <Button color="black" onClick={navGuard.accept}>
+              Yes
+            </Button>
+            <Button color="red" onClick={navGuard.reject}>
+              No
+            </Button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

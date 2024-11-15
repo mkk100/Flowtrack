@@ -1,7 +1,7 @@
 "use client";
 import { DeepWorkLogs, UserProfile } from "@/app/interface";
 import { useUser } from "@clerk/nextjs";
-import { Button, Divider } from "@mantine/core";
+import { Button, Card, Divider } from "@mantine/core";
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -58,6 +58,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       const followers = response.data;
       setFollowerCount(followers["followers"]);
     };
+
     const fetchFollowing = async () => {
       const response = await axios.get(
         `http://localhost:4000/users/following/` + currentProfile?.id
@@ -65,17 +66,21 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       const following = response.data;
       setFollowingCount(following["followings"]);
     };
+
     const fetchDeepWorkLogs = async () => {
       const response = await axios.get(
-        `http://localhost:4000/users/${user?.username}/deepWorkLogs`
+        `http://localhost:4000/users/${username}/deepWorkLogs`
       );
       console.log(response.data);
       setDeepWorkLogs(response.data);
     };
-    fetchFollower();
-    fetchFollowing();
-    fetchDeepWorkLogs();
-  }, [currentProfile?.id, followed]);
+
+    if (currentProfile?.id && user?.username) {
+      fetchFollower();
+      fetchFollowing();
+      fetchDeepWorkLogs();
+    }
+  }, [currentProfile?.id, followed, user?.username]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +94,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       setCurrentUser(secondResponse.data);
     };
     fetchData();
-  }, []); // this is not getting executed
+  }, [user?.username, username]); // this is not getting executed
   useEffect(() => {
     const fetchData = async () => {
       if (user?.username !== username) {
@@ -106,7 +111,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       }
     };
     fetchData();
-  }, [followed]);
+  }, [followed, user?.username, username]);
 
   if (!currentProfile) {
     return <div>Loading...</div>;
@@ -169,14 +174,29 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               key={log.id}
               className="flex flex-col md:flex-row items-start md:items-center gap-4 p-4 border-b border-gray-200"
             >
-              <div className="text-lg font-semibold text-blue-600">
-                {log.minutesLogged} minutes
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+                <Card
+                  shadow="md"
+                  padding="xl"
+                  radius="lg"
+                  withBorder
+                  className="w-full bg-gray-50 hover:shadow-lg transition-shadow duration-300"
+                >
+                  <div className="text-lg font-semibold text-gray-800 mb-3">
+                    {log.description}
+                  </div>
+                  <div className="text-sm text-gray-600 mb-2">
+                    Duration:&nbsp;
+                    {log.minutesLogged} minutes
+                  </div>
+                  <div className="text-sm text-gray-600 mb-2">
+                    Deep Work Level: {log.deepWorkLevel}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {new Date(log.logDate).toLocaleDateString()}
+                  </div>
+                </Card>
               </div>
-              <div className="text-sm text-gray-600">{log.deepWorkLevel}</div>
-              <div className="text-sm text-gray-500">
-                {new Date(log.logDate).toLocaleDateString()}
-              </div>
-              <div className="text-sm text-gray-700">{log.description}</div>
             </div>
           ))}
         </div>

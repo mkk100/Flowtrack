@@ -222,7 +222,6 @@ app.get("/users/:username/available-groups", async (req, res) => {
       where: { userId: user.id.toString() },
       select: { groupId: true },
     });
-
     const userGroupIds = userGroups.map((membership) => membership.groupId);
 
     const availableGroups = await prisma.group.findMany({
@@ -240,7 +239,6 @@ app.get("/users/:username/available-groups", async (req, res) => {
         },
       },
     });
-
     res.status(200).json(availableGroups);
   } catch {
     res.status(400).json({ error: "can't retrieve available groups" });
