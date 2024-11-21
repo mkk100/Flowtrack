@@ -212,15 +212,16 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               title="Following"
               centered
               size="sm"
+              className="max-w-4 max-h-4"
             >
               <div className="flex flex-col gap-4">
-                <div className="flex overflow-x-auto space-x-4">
+                <div className="">
                   {following?.map((followingPerson) => (
                     <div
                       key={
                         followingPerson.followingId + followingPerson.username
                       }
-                      className="flex-shrink-0 flex items-center space-x-2"
+                      className="flex-shrink-0 flex items-center space-x-2 mb-4"
                     >
                       <Image
                         loader={() => followingPerson.avatar}
@@ -282,101 +283,111 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         <div className="text-xl font-bold mb-4">Deep Work Logs</div>
         <div className="overflow-x-auto pb-20 pr-4">
           <div className="flex gap-4">
-            {deepWorkLogs?.map((log) => (
-              <Card
-                key={log.id}
-                shadow="md"
-                padding="xl"
-                radius="lg"
-                withBorder
-                className="bg-gray-50 hover:shadow-lg transition-shadow duration-300 min-w-[300px]"
-              >
-                <div className="flex justify-between ">
-                  <div className="text-lg font-semibold text-gray-800 mb-3">
-                    <div onClick={openEdit}>{log.description}</div>
+            {deepWorkLogs
+              ?.slice()
+              .reverse()
+              .map((log) => (
+                <Card
+                  key={log.id}
+                  shadow="md"
+                  padding="xl"
+                  radius="lg"
+                  withBorder
+                  className="bg-gray-50 hover:shadow-lg transition-shadow duration-300 min-w-[300px]"
+                >
+                  <div className="flex justify-between ">
+                    <div className="text-lg font-semibold text-gray-800 mb-3">
+                      <div onClick={openEdit}>{log.description}</div>
+                    </div>
+                    <Modal
+                      opened={openedEdit}
+                      onClose={closeEdit}
+                      title="Edit Log"
+                      centered
+                    >
+                      <div className="space-y-4">
+                        <TextInput
+                          label="Title"
+                          placeholder="Edit Description"
+                          required
+                          className="mb-4"
+                          defaultValue={log.description}
+                          onChange={(event) =>
+                            (log.description = event.currentTarget.value)
+                          }
+                        />
+                        <Select
+                          label="Deep Work Level"
+                          placeholder="Pick value"
+                          data={["1", "2", "3", "4", "5"]}
+                          style={{ marginBottom: "1rem" }}
+                          onChange={(value) => {
+                            log.deepWorkLevel = value
+                              ? parseInt(value)
+                              : log.deepWorkLevel;
+                          }}
+                          required
+                          defaultValue={log.deepWorkLevel.toString()}
+                        />
+                      </div>
+                      <div className="flex justify-end space-x-4 mt-6">
+                        <Button
+                          color="black"
+                          onClick={() =>
+                            editLogs(
+                              log.id,
+                              log.description,
+                              log.deepWorkLevel.toString()
+                            )
+                          }
+                        >
+                          Save
+                        </Button>
+                        <Button color="gray" onClick={closeEdit}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </Modal>
+                    <FontAwesomeIcon
+                      icon={faTrashCan}
+                      onClick={open}
+                      className="cursor-pointer"
+                    />{" "}
+                    <Modal
+                      opened={opened}
+                      onClose={close}
+                      title=" Are you sure you want to delete this log?"
+                      centered
+                    >
+                      <div className="flex justify-end space-x-4">
+                        <Button
+                          color="red"
+                          onClick={() => handleDelete(log.id)}
+                        >
+                          Delete
+                        </Button>
+                        <Button color="black" onClick={close}>
+                          Cancel
+                        </Button>
+                      </div>
+                    </Modal>
                   </div>
-                  <Modal
-                    opened={openedEdit}
-                    onClose={closeEdit}
-                    title="Edit Log"
-                    centered
-                  >
-                    <div className="space-y-4">
-                      <TextInput
-                        label="Title"
-                        placeholder="Edit Description"
-                        required
-                        className="mb-4"
-                        defaultValue={log.description}
-                        onChange={(event) =>
-                          (log.description = event.currentTarget.value)
-                        }
-                      />
-                      <Select
-                        label="Deep Work Level"
-                        placeholder="Pick value"
-                        data={["1", "2", "3", "4", "5"]}
-                        style={{ marginBottom: "1rem" }}
-                        onChange={(value) => {
-                          log.deepWorkLevel = value
-                            ? parseInt(value)
-                            : log.deepWorkLevel;
-                        }}
-                        required
-                        defaultValue={log.deepWorkLevel.toString()}
-                      />
-                    </div>
-                    <div className="flex justify-end space-x-4 mt-6">
-                      <Button
-                        color="black"
-                        onClick={() =>
-                          editLogs(
-                            log.id,
-                            log.description,
-                            log.deepWorkLevel.toString()
-                          )
-                        }
-                      >
-                        Save
-                      </Button>
-                      <Button color="gray" onClick={closeEdit}>
-                        Cancel
-                      </Button>
-                    </div>
-                  </Modal>
-                  <FontAwesomeIcon
-                    icon={faTrashCan}
-                    onClick={open}
-                    className="cursor-pointer"
-                  />{" "}
-                  <Modal
-                    opened={opened}
-                    onClose={close}
-                    title=" Are you sure you want to delete this log?"
-                    centered
-                  >
-                    <div className="flex justify-end space-x-4">
-                      <Button color="red" onClick={() => handleDelete(log.id)}>
-                        Delete
-                      </Button>
-                      <Button color="black" onClick={close}>
-                        Cancel
-                      </Button>
-                    </div>
-                  </Modal>
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  Duration:&nbsp;
-                  {log.minutesLogged} minutes
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  Deep Work Level: {log.deepWorkLevel}
-                </div>
-                <div className="text-sm text-gray-500">
-                  {new Date(log.logDate).toLocaleDateString()}
-                </div>
-              </Card>
-            ))}
+                  <div className="text-sm text-gray-600 mb-2">
+                    Duration:&nbsp;
+                    {log.minutesLogged} minutes
+                  </div>
+                  <div className="text-sm text-gray-600 mb-2">
+                    Deep Work Level: {log.deepWorkLevel}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {new Date(log.logDate).toLocaleDateString()},{" "}
+                    {new Date(log.logDate).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </div>
+                </Card>
+              ))}
           </div>
         </div>
       </div>

@@ -505,9 +505,29 @@ app.get("/users/followers/:id", async (req, res) => {
     res.status(400).json({ error: "can't retrieve followers count" });
   }
 });
-app.get("/posts", async (req, res) => {
+app.get("/posts/:username", async (req, res) => {
+  const { username } = req.params;
   try {
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const following = await prisma.follow.findMany({
+      where: { followerId: user.id.toString() },
+      select: { followingId: true },
+    });
+
+    const followingIds = following.map((follow) => follow.followingId);
+    followingIds.push(user.id.toString()); // Include the user's own posts
+
     const posts = await prisma.post.findMany({
+      where: {
+        userId: { in: followingIds },
+      },
       include: {
         user: {
           select: {
