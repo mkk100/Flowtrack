@@ -3,7 +3,7 @@ import { DeepWorkLogs, UserProfile } from "@/app/interface";
 import { useUser } from "@clerk/nextjs";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, Divider, Modal } from "@mantine/core";
+import { Button, Card, Divider, Modal, Select, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Image from "next/image";
@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 const ProfilePage = ({ params }: { params: { username: string } }) => {
   const { username } = params;
   const [opened, { open, close }] = useDisclosure(false);
+  const [openedEdit, { open: openEdit, close: closeEdit }] =
+    useDisclosure(false);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(
     null
   );
@@ -53,6 +55,17 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }
+  };
+  const editLogs = async (id: string, description: string, level: string) => {
+    try {
+      await axios.put(`http://localhost:4000/deepWorkLogs/${id}`, {
+        description: description,
+        deepWorkLevel: level,
+      });
+    } catch (error) {
+      console.error("Error editing log:", error);
+    }
+    closeEdit();
   };
   useEffect(() => {
     const fetchFollower = async () => {
@@ -193,8 +206,57 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               >
                 <div className="flex justify-between ">
                   <div className="text-lg font-semibold text-gray-800 mb-3">
-                    {log.description}
+                    <div onClick={openEdit}>{log.description}</div>
                   </div>
+                  <Modal
+                    opened={openedEdit}
+                    onClose={closeEdit}
+                    title="Edit Log"
+                    centered
+                  >
+                    <div className="space-y-4">
+                      <TextInput
+                        label="Title"
+                        placeholder="Edit Description"
+                        required
+                        className="mb-4"
+                        defaultValue={log.description}
+                        onChange={(event) =>
+                          (log.description = event.currentTarget.value)
+                        }
+                      />
+                      <Select
+                        label="Deep Work Level"
+                        placeholder="Pick value"
+                        data={["1", "2", "3", "4", "5"]}
+                        style={{ marginBottom: "1rem" }}
+                        onChange={(value) => {
+                          log.deepWorkLevel = value
+                            ? parseInt(value)
+                            : log.deepWorkLevel;
+                        }}
+                        required
+                        defaultValue={log.deepWorkLevel.toString()}
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-4 mt-6">
+                      <Button
+                        color="black"
+                        onClick={() =>
+                          editLogs(
+                            log.id,
+                            log.description,
+                            log.deepWorkLevel.toString()
+                          )
+                        }
+                      >
+                        Save
+                      </Button>
+                      <Button color="gray" onClick={closeEdit}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </Modal>
                   <FontAwesomeIcon
                     icon={faTrashCan}
                     onClick={open}
