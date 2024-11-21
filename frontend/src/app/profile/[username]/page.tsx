@@ -3,7 +3,7 @@ import { DeepWorkLogs, UserProfile } from "@/app/interface";
 import { useUser } from "@clerk/nextjs";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, Divider, Modal, TextInput } from "@mantine/core";
+import { Button, Card, Divider, Modal, Select, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Image from "next/image";
@@ -24,8 +24,6 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [followButton, setFollowButton] = useState(false);
   const [followingCount, setFollowingCount] = useState(0);
   const [deepWorkLogs, setDeepWorkLogs] = useState<DeepWorkLogs[]>();
-  const [description, setDescription] = useState("");
-  const [level, setLevel] = useState("");
   const handleFollow = async () => {
     try {
       await axios.post(
@@ -58,7 +56,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       console.error("Error unfollowing user:", error);
     }
   };
-  const editLogs = async (id: string) => {
+  const editLogs = async (id: string, description: string, level: string) => {
     try {
       await axios.put(`http://localhost:4000/deepWorkLogs/${id}`, {
         description: description,
@@ -213,10 +211,10 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                   <Modal
                     opened={openedEdit}
                     onClose={closeEdit}
-                    title="Edit"
+                    title="Edit Log"
                     centered
                   >
-                    <div className="">
+                    <div className="space-y-4">
                       <TextInput
                         label="Title"
                         placeholder="Edit Description"
@@ -224,23 +222,40 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                         className="mb-4"
                         defaultValue={log.description}
                         onChange={(event) =>
-                          setDescription(event.currentTarget.value)
+                          (log.description = event.currentTarget.value)
                         }
                       />
-                      <TextInput
-                        label="Description"
-                        placeholder="Edit Deep Work Level"
+                      <Select
+                        label="Deep Work Level"
+                        placeholder="Pick value"
+                        data={["1", "2", "3", "4", "5"]}
+                        style={{ marginBottom: "1rem" }}
+                        onChange={(value) => {
+                          log.deepWorkLevel = value
+                            ? parseInt(value)
+                            : log.deepWorkLevel;
+                        }}
                         required
-                        className="mb-4"
-                        defaultValue={log.deepWorkLevel}
-                        onChange={(event) =>
-                          setLevel(event.currentTarget.value)
-                        }
+                        defaultValue={log.deepWorkLevel.toString()}
                       />
                     </div>
-                    <Button color="black" onClick={() => editLogs(log.id)}>
-                      Edit
-                    </Button>
+                    <div className="flex justify-end space-x-4 mt-6">
+                      <Button
+                        color="black"
+                        onClick={() =>
+                          editLogs(
+                            log.id,
+                            log.description,
+                            log.deepWorkLevel.toString()
+                          )
+                        }
+                      >
+                        Save
+                      </Button>
+                      <Button color="gray" onClick={closeEdit}>
+                        Cancel
+                      </Button>
+                    </div>
                   </Modal>
                   <FontAwesomeIcon
                     icon={faTrashCan}
