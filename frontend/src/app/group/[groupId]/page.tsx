@@ -42,15 +42,16 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
         );
         setRowData(calculations.data);
         const response = await axios.get(
-          `http://localhost:4000/users/${user?.username}/isAdmin`
+          `http://localhost:4000/users/${user?.username}/groups/${params.groupId}`
         );
+        console.log(isAdmin)
         setIsAdmin(response.data.isAdmin);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     fetchData();
-  }, [params.groupId, user, user?.username]);
+  }, [isAdmin, params.groupId, user, user?.username]);
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1 style={{ color: "#333", textAlign: "center" }}>

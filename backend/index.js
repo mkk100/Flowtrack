@@ -185,8 +185,8 @@ app.delete("/groups/:groupId", async (req, res) => {
     res.status(400).json({ error: "can't delete the group and memberships" });
   }
 });
-app.get("/users/:username/isAdmin", async (req, res) => {
-  const { username } = req.params;
+app.get("/users/:username/groups/:groupId", async (req, res) => {
+  const { username, groupId } = req.params;
   try {
     const user = await prisma.user.findUnique({
       where: { username: username },
@@ -197,7 +197,10 @@ app.get("/users/:username/isAdmin", async (req, res) => {
     }
 
     const isAdmin = await prisma.group.findFirst({
-      where: { adminId: user.id.toString() },
+      where: {
+        adminId: user.id.toString(),
+        id: groupId.toString(),
+      },
     });
 
     res.status(200).json({ isAdmin: !!isAdmin });
