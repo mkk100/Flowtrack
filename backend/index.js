@@ -141,12 +141,6 @@ app.get("/users/:username/deepWorkLogs", async (req, res) => {
 app.post("/groups", async (req, res) => {
   const { groupName, groupDescription, user } = req.body;
   try {
-    const group = await prisma.group.create({
-      data: {
-        name: groupName,
-        description: groupDescription,
-      },
-    });
     const userRecord = await prisma.user.findUnique({
       where: { username: user },
     });
@@ -154,6 +148,14 @@ app.post("/groups", async (req, res) => {
     if (!userRecord) {
       return res.status(400).json({ error: "User not found" });
     }
+
+    const group = await prisma.group.create({
+      data: {
+        name: groupName,
+        description: groupDescription,
+        adminId: userRecord.id,
+      },
+    });
 
     const groupMember = await prisma.groupMembership.create({
       data: {
@@ -199,7 +201,34 @@ app.post("/groups/:groupId/memberships", async (req, res) => {
     res.status(400).json({ error: "can't add the membership" });
   }
 });
+app.delete("/groups/:groupId/memberships", async (req, res) => {
+  const { groupId } = req.params;
+  const { userName } = req.body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username: userName },
+    });
 
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const membership = await prisma.groupMembership.deleteMany({
+      where: {
+        groupId: groupId.toString(),
+        userId: user.id.toString(),
+      },
+    });
+
+    if (membership.count === 0) {
+      return res.status(404).json({ error: "Membership not found" });
+    }
+
+    res.status(200).json({ message: "User removed from group" });
+  } catch {
+    res.status(400).json({ error: "can't remove the user from group" });
+  }
+});
 app.get("/users/:username/groups", async (req, res) => {
   const { username } = req.params;
   try {
