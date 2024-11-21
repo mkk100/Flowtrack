@@ -61,50 +61,58 @@ export default function GroupViewLists() {
         </Tabs.List>
         <Tabs.Panel value="joined">
           <div className="flex flex-col space-y-4 pt-4">
-            {joinedGroups.map((group) => (
-              <div
-                key={group.groupId}
-                className="cursor-auto flex justify-between items-center p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
-              >
-                <div className="flex-1">
-                  <div
-                    className="text-lg font-semibold text-black cursor-pointer hover:text-gray-500"
-                    onClick={() => handleRowClick(group.groupId)}
-                  >
-                    {group.group.name}
-                  </div>
-                  <div className="text-gray-600">{group.group.description}</div>
-                </div>
-                <div className="text-sm text-gray-500 pr-16">
-                  {group.group._count.memberships} members
-                </div>
-                <Button
-                  color="black"
-                  variant="outline"
-                  onClick={() => handleUnjoinGroup(group.groupId)}
-                >
-                  Joined
-                </Button>
-                <Modal
-                  opened={opened}
-                  onClose={close}
-                  title="Are you sure you want to join this group?"
-                  centered
-                >
-                  <div className="flex justify-end space-x-4">
-                    <Button
-                      color="black"
-                      onClick={() => handleJoinGroup(group.id)}
-                    >
-                      Yes
-                    </Button>
-                    <Button color="red" onClick={close}>
-                      No
-                    </Button>
-                  </div>
-                </Modal>
+            {joinedGroups.length === 0 ? (
+              <div className="text-center text-gray-600">
+                You have not joined any group
               </div>
-            ))}
+            ) : (
+              joinedGroups.map((group) => (
+                <div
+                  key={group.groupId}
+                  className="cursor-auto flex justify-between items-center p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200"
+                >
+                  <div className="flex-1">
+                    <div
+                      className="text-lg font-semibold text-black cursor-pointer hover:text-gray-500"
+                      onClick={() => handleRowClick(group.groupId)}
+                    >
+                      {group.group.name}
+                    </div>
+                    <div className="text-gray-600">
+                      {group.group.description}
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-500 pr-16">
+                    {group.group._count.memberships} members
+                  </div>
+                  <Button
+                    color="black"
+                    variant="outline"
+                    onClick={() => handleUnjoinGroup(group.groupId)}
+                  >
+                    Joined
+                  </Button>
+                  <Modal
+                    opened={opened}
+                    onClose={close}
+                    title="Are you sure you want to join this group?"
+                    centered
+                  >
+                    <div className="flex justify-end space-x-4">
+                      <Button
+                        color="black"
+                        onClick={() => handleJoinGroup(group.id)}
+                      >
+                        Yes
+                      </Button>
+                      <Button color="red" onClick={close}>
+                        No
+                      </Button>
+                    </div>
+                  </Modal>
+                </div>
+              ))
+            )}
           </div>
         </Tabs.Panel>
         <Tabs.Panel value="theRest">

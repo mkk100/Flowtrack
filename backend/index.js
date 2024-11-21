@@ -185,8 +185,8 @@ app.delete("/groups/:groupId", async (req, res) => {
     res.status(400).json({ error: "can't delete the group and memberships" });
   }
 });
-app.get("/users/:username/isAdmin", async (req, res) => {
-  const { username } = req.params;
+app.get("/users/:username/groups/:groupId", async (req, res) => {
+  const { username, groupId } = req.params;
   try {
     const user = await prisma.user.findUnique({
       where: { username: username },
@@ -197,7 +197,10 @@ app.get("/users/:username/isAdmin", async (req, res) => {
     }
 
     const isAdmin = await prisma.group.findFirst({
-      where: { adminId: user.id.toString() },
+      where: {
+        adminId: user.id.toString(),
+        id: groupId.toString(),
+      },
     });
 
     res.status(200).json({ isAdmin: !!isAdmin });
@@ -485,17 +488,46 @@ app.get("/users/followed/:user/:guest", async (req, res) => {
 app.get("/users/followers/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const followersCount = await prisma.follow.count({
+    const followers = await prisma.follow.findMany({
       where: { followingId: id.toString() },
     });
-    res.status(200).json({ followers: followersCount });
+    const followersWithDetails = await Promise.all(
+      followers.map(async (follower) => {
+        const user = await prisma.user.findUnique({
+          where: { id: follower.followerId.toString() },
+          select: { id: true, username: true, avatar: true },
+        });
+        return user;
+      })
+    );
+    res.status(200).json({ followers: followersWithDetails });
   } catch {
     res.status(400).json({ error: "can't retrieve followers count" });
   }
 });
-app.get("/posts", async (req, res) => {
+app.get("/posts/:username", async (req, res) => {
+  const { username } = req.params;
   try {
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const following = await prisma.follow.findMany({
+      where: { followerId: user.id.toString() },
+      select: { followingId: true },
+    });
+
+    const followingIds = following.map((follow) => follow.followingId);
+    followingIds.push(user.id.toString()); // Include the user's own posts
+
     const posts = await prisma.post.findMany({
+      where: {
+        userId: { in: followingIds },
+      },
       include: {
         user: {
           select: {
@@ -513,10 +545,19 @@ app.get("/posts", async (req, res) => {
 app.get("/users/following/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const followingsCount = await prisma.follow.count({
+    const following = await prisma.follow.findMany({
       where: { followerId: id.toString() },
     });
-    res.status(200).json({ followings: followingsCount });
+    const followingWithDetails = await Promise.all(
+      following.map(async (follow) => {
+        const user = await prisma.user.findUnique({
+          where: { id: follow.followingId.toString() },
+          select: { id: true, username: true, avatar: true },
+        });
+        return user;
+      })
+    );
+    res.status(200).json({ followings: followingWithDetails });
   } catch {
     res.status(400).json({ error: "can't retrieve followings count" });
   }
