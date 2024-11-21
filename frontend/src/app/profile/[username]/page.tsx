@@ -195,7 +195,11 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                   <div className="text-lg font-semibold text-gray-800 mb-3">
                     {log.description}
                   </div>
-                  <FontAwesomeIcon icon={faTrashCan} onClick={open} />{" "}
+                  <FontAwesomeIcon
+                    icon={faTrashCan}
+                    onClick={open}
+                    className="cursor-pointer"
+                  />{" "}
                   <Modal
                     opened={opened}
                     onClose={close}
