@@ -27,9 +27,16 @@ app.get("/users/:username", async (req, res) => {
     res.status(400).json({ error: "can't find the data" });
   }
 });
-app.get("/users", async (req, res) => {
+app.get("/users/suggested/:username", async (req, res) => {
+  const { username } = req.params;
   try {
-    const users = await prisma.user.findMany();
+    const users = await prisma.user.findMany({
+      where: {
+        username: {
+          not: username,
+        },
+      },
+    });
     res.status(200).json(users);
   } catch {
     res.status(400).json({ error: "can't find the data" });

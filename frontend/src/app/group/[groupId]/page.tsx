@@ -16,7 +16,7 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
   const router = useRouter();
   const [colDef] = useState<ColDef[]>([
     { field: "username", headerName: "User Name" },
-    { field: "totalMinutes", headerName: "Total Minutes" },
+    { field: "totalMinutes", headerName: "Total Minutes", sort: "desc" },
     {
       field: "averageDeepWorkLevel",
       headerName: "Average Deep Work Intensity",
@@ -44,7 +44,7 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
         const response = await axios.get(
           `http://localhost:4000/users/${user?.username}/groups/${params.groupId}`
         );
-        console.log(isAdmin)
+        console.log(isAdmin);
         setIsAdmin(response.data.isAdmin);
       } catch (error) {
         console.error("Error fetching data:", error);

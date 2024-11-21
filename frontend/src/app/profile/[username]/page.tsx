@@ -29,6 +29,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   );
   const router = useRouter();
   const { user } = useUser();
+  const [isOwner, setIsOwner] = useState(false);
   const [followerCount, setFollowerCount] = useState(0);
   const [follower, setFollower] = useState<Follower[] | null>(null);
   const [following, setFollowing] = useState<Following[] | null>(null);
@@ -56,6 +57,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       console.error("Error following user:", error);
     }
   };
+
   const handleUnfollow = async () => {
     try {
       await axios.delete(`http://localhost:4000/users/unfollow`, {
@@ -90,7 +92,6 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       setFollowerCount(followers["followers"].length);
       setFollower(followers["followers"]);
     };
-
     const fetchFollowing = async () => {
       const response = await axios.get(
         `http://localhost:4000/users/following/` + currentProfile?.id
@@ -108,13 +109,20 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       console.log(response.data);
       setDeepWorkLogs(response.data);
     };
-
+    const checkOwner = async () => {
+      if (currentUser?.id === currentProfile?.id) {
+        setIsOwner(true);
+      } else {
+        setIsOwner(false);
+      }
+    };
     if (currentProfile?.id && user?.username) {
       fetchFollower();
       fetchFollowing();
       fetchDeepWorkLogs();
+      checkOwner();
     }
-  }, [currentProfile?.id, followed, user?.username, username]);
+  }, [currentProfile?.id, currentUser?.id, followed, user?.username, username]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -295,9 +303,11 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                   withBorder
                   className="bg-gray-50 hover:shadow-lg transition-shadow duration-300 min-w-[300px]"
                 >
-                  <div className="flex justify-between ">
+                  <div className="flex justify-between max-h-32">
                     <div className="text-lg font-semibold text-gray-800 mb-3">
-                      <div onClick={openEdit}>{log.description}</div>
+                      <div onClick={openEdit} className="max-w-4">
+                        {log.description}
+                      </div>
                     </div>
                     <Modal
                       opened={openedEdit}
@@ -348,11 +358,13 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                         </Button>
                       </div>
                     </Modal>
-                    <FontAwesomeIcon
-                      icon={faTrashCan}
-                      onClick={open}
-                      className="cursor-pointer"
-                    />{" "}
+                    {isOwner && (
+                      <FontAwesomeIcon
+                        icon={faTrashCan}
+                        onClick={open}
+                        className="cursor-pointer"
+                      />
+                    )}
                     <Modal
                       opened={opened}
                       onClose={close}

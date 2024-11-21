@@ -4,14 +4,17 @@ import { useEffect, useState } from "react";
 import { UserProfile } from "../interface";
 import Link from "next/link";
 import { Card, Image } from "@mantine/core";
+import { useUser } from "@clerk/nextjs";
 
 export default function FriendsPage() {
+  const {user} = useUser();
   const [users, setUsers] = useState<UserProfile[]>([]);
   useEffect(() => {
-    axios.get("http://localhost:4000/users").then((response) => {
+    if (!user) return
+    axios.get(`http://localhost:4000/users/suggested/${user?.username}`).then((response) => {
       setUsers(response.data);
     });
-  }, []);
+  }, [user, user?.username]);
   return (
     <div
       style={{

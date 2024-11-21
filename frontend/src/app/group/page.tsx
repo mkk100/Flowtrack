@@ -5,20 +5,22 @@ import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import { useState } from "react";
 import GroupViewLists from "../components/GroupViewLists";
+import { useRouter } from "next/navigation";
 
 const GroupPage = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [groupName, setGroupName] = useState("Group 1");
+  const router = useRouter();
   const [groupDescription, setGroupDescription] = useState("Group");
   const { user } = useUser();
   const createGroup = async () => {
     try {
-      await axios.post("http://localhost:4000/groups", {
+      const response = await axios.post("http://localhost:4000/groups", {
         groupName: groupName,
         groupDescription: groupDescription,
         user: user?.username,
       });
-      location.reload();
+      router.push(`/group/${response.data.group.id}`);
     } catch (error) {
       console.error(error);
     }
