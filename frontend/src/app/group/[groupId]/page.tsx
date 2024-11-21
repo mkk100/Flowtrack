@@ -57,6 +57,7 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
           border: "1px solid #ccc",
           borderRadius: "8px",
           overflow: "hidden",
+          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         }}
       >
         <AgGridReact
@@ -67,7 +68,11 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
             sortable: true,
             filter: true,
             resizable: true,
+            headerClass: "ag-header-cell",
+            cellClass: "ag-cell",
+            flex: 1,
           }}
+          className="ag-theme-quartz flex-1"
         />
       </div>
     </div>
