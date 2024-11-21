@@ -62,3 +62,16 @@ export interface DeepWorkLogs {
   deepWorkLevel: number;
   logDate: string;
 }
+
+export interface Follower{
+  followerId: string;
+  username: string;
+  avatar: string;
+}
+
+export interface Following{
+  followingId: string;
+  username: string;
+  avatar: string;
+}
+

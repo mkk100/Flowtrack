@@ -1,5 +1,10 @@
 "use client";
-import { DeepWorkLogs, UserProfile } from "@/app/interface";
+import {
+  DeepWorkLogs,
+  Follower,
+  Following,
+  UserProfile,
+} from "@/app/interface";
 import { useUser } from "@clerk/nextjs";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,6 +12,7 @@ import { Button, Card, Divider, Modal, Select, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {
@@ -14,11 +20,18 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [openedEdit, { open: openEdit, close: closeEdit }] =
     useDisclosure(false);
+  const [openedFollower, { open: openFollower, close: closeFollower }] =
+    useDisclosure(false);
+  const [openedFollowing, { open: openFollowing, close: closeFollowing }] =
+    useDisclosure(false);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(
     null
   );
+  const router = useRouter();
   const { user } = useUser();
   const [followerCount, setFollowerCount] = useState(0);
+  const [follower, setFollower] = useState<Follower[] | null>(null);
+  const [following, setFollowing] = useState<Following[] | null>(null);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
   const [followed, setFollowed] = useState(false);
   const [followButton, setFollowButton] = useState(false);
@@ -73,7 +86,9 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         `http://localhost:4000/users/followers/` + currentProfile?.id
       );
       const followers = response.data;
-      setFollowerCount(followers["followers"]);
+      console.log(followers);
+      setFollowerCount(followers["followers"].length);
+      setFollower(followers["followers"]);
     };
 
     const fetchFollowing = async () => {
@@ -81,7 +96,9 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         `http://localhost:4000/users/following/` + currentProfile?.id
       );
       const following = response.data;
-      setFollowingCount(following["followings"]);
+      console.log(following);
+      setFollowingCount(following["followings"].length);
+      setFollowing(following["followings"]);
     };
 
     const fetchDeepWorkLogs = async () => {
@@ -141,6 +158,9 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   if (!currentProfile) {
     return <div>Loading...</div>;
   }
+  const handleUrl = (profileName: string) => {
+    router.push(`/profile/${profileName}`);
+  };
   return (
     <div className="pl-12">
       <div className="flex pt-8 items-center pb-6">
@@ -182,11 +202,78 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               <span className="font-bold">{deepWorkLogs?.length} </span> logs
             </div>
             <div>
-              <span className="font-bold">{followingCount} </span> following
+              <div onClick={openFollowing}>
+                <span className="font-bold">{followingCount} </span> following
+              </div>
             </div>
+            <Modal
+              opened={openedFollowing}
+              onClose={closeFollowing}
+              title="Following"
+              centered
+              size="sm"
+            >
+              <div className="flex flex-col gap-4">
+                <div className="flex overflow-x-auto space-x-4">
+                  {following?.map((followingPerson) => (
+                    <div
+                      key={
+                        followingPerson.followingId + followingPerson.username
+                      }
+                      className="flex-shrink-0 flex items-center space-x-2"
+                    >
+                      <Image
+                        loader={() => followingPerson.avatar}
+                        src={followingPerson.avatar}
+                        alt="User Avatar"
+                        className="rounded-full"
+                        width={50}
+                        height={50}
+                      />
+                      <div onClick={() => handleUrl(followingPerson.username)}>
+                        {followingPerson.username}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Modal>
             <div>
-              <span className="font-bold">{followerCount} </span>followers
+              <div onClick={openFollower}>
+                <span className="font-bold">{followerCount} </span>
+                followers
+              </div>
             </div>
+            <Modal
+              opened={openedFollower}
+              onClose={closeFollower}
+              title="Followers"
+              centered
+              size="sm"
+            >
+              <div className="flex flex-col gap-4">
+                <div className="flex overflow-x-auto space-x-4">
+                  {follower?.map((follower) => (
+                    <div
+                      key={follower.followerId + follower.username}
+                      className="flex-shrink-0 flex items-center space-x-2"
+                    >
+                      <Image
+                        loader={() => follower.avatar}
+                        src={follower.avatar}
+                        alt="User Avatar"
+                        className="rounded-full"
+                        width={50}
+                        height={50}
+                      />
+                      <div onClick={() => handleUrl(follower.username)}>
+                        {follower.username}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Modal>
           </div>
         </div>
       </div>
