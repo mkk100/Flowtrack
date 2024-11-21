@@ -13,17 +13,16 @@ const GroupPage = () => {
   const { user } = useUser();
   const createGroup = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/groups", {
+      await axios.post("http://localhost:4000/groups", {
         groupName: groupName,
         groupDescription: groupDescription,
         user: user?.username,
       });
-      console.log(response.status);
+      location.reload();
     } catch (error) {
       console.error(error);
     }
   };
-
   return (
     <div className="pt-6 p-32 overflow-y-auto h-screen pb-16">
       <div className="flex justify-between">

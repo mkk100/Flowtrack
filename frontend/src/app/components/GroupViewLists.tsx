@@ -25,6 +25,12 @@ export default function GroupViewLists() {
     close();
     handleRowClick(groupId);
   };
+  const handleUnjoinGroup = async (groupId: string) => {
+    await axios.delete(`http://localhost:4000/groups/${groupId}/memberships`, {
+      data: { userName: user?.username },
+    });
+    location.reload();
+  };
   useEffect(() => {
     const fetchGroups = async () => {
       try {
@@ -72,6 +78,13 @@ export default function GroupViewLists() {
                 <div className="text-sm text-gray-500 pr-16">
                   {group.group._count.memberships} members
                 </div>
+                <Button
+                  color="black"
+                  variant="outline"
+                  onClick={() => handleUnjoinGroup(group.groupId)}
+                >
+                  Joined
+                </Button>
                 <Modal
                   opened={opened}
                   onClose={close}
