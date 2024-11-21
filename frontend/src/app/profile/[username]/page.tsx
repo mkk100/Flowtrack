@@ -1,13 +1,17 @@
 "use client";
 import { DeepWorkLogs, UserProfile } from "@/app/interface";
 import { useUser } from "@clerk/nextjs";
-import { Button, Card, Divider } from "@mantine/core";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Button, Card, Divider, Modal } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {
   const { username } = params;
+  const [opened, { open, close }] = useDisclosure(false);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(
     null
   );
@@ -80,7 +84,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       fetchFollowing();
       fetchDeepWorkLogs();
     }
-  }, [currentProfile?.id, followed, user?.username]);
+  }, [currentProfile?.id, followed, user?.username, username]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,7 +116,15 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
     };
     fetchData();
   }, [followed, user?.username, username]);
-
+  const handleDelete = async (id: string) => {
+    try {
+      await axios.delete(`http://localhost:4000/deepWorkLogs/${id}`);
+      setDeepWorkLogs((prev) => prev?.filter((log) => log.id !== id));
+    } catch (error) {
+      console.error("Error deleting log:", error);
+    }
+    close();
+  };
   if (!currentProfile) {
     return <div>Loading...</div>;
   }
@@ -154,7 +166,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
           </div>
           <div className="flex justify-between gap-8 text-base">
             <div>
-              <span className="font-bold">6 </span>logs
+              <span className="font-bold">{deepWorkLogs?.length} </span> logs
             </div>
             <div>
               <span className="font-bold">{followingCount} </span> following
@@ -168,37 +180,55 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       <Divider className="w-11/12" />
       <div className="mt-8">
         <div className="text-xl font-bold mb-4">Deep Work Logs</div>
-        <div className="overflow-y-auto h-screen pb-20 pr-4">
-          {deepWorkLogs?.map((log) => (
-            <div
-              key={log.id}
-              className="flex flex-col md:flex-row items-start md:items-center gap-4 p-4 border-b border-gray-200"
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
-                <Card
-                  shadow="md"
-                  padding="xl"
-                  radius="lg"
-                  withBorder
-                  className="w-full bg-gray-50 hover:shadow-lg transition-shadow duration-300"
-                >
+        <div className="overflow-x-auto pb-20 pr-4">
+          <div className="flex gap-4">
+            {deepWorkLogs?.map((log) => (
+              <Card
+                key={log.id}
+                shadow="md"
+                padding="xl"
+                radius="lg"
+                withBorder
+                className="bg-gray-50 hover:shadow-lg transition-shadow duration-300 min-w-[300px]"
+              >
+                <div className="flex justify-between ">
                   <div className="text-lg font-semibold text-gray-800 mb-3">
                     {log.description}
                   </div>
-                  <div className="text-sm text-gray-600 mb-2">
-                    Duration:&nbsp;
-                    {log.minutesLogged} minutes
-                  </div>
-                  <div className="text-sm text-gray-600 mb-2">
-                    Deep Work Level: {log.deepWorkLevel}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(log.logDate).toLocaleDateString()}
-                  </div>
-                </Card>
-              </div>
-            </div>
-          ))}
+                  <FontAwesomeIcon
+                    icon={faTrashCan}
+                    onClick={open}
+                    className="cursor-pointer"
+                  />{" "}
+                  <Modal
+                    opened={opened}
+                    onClose={close}
+                    title=" Are you sure you want to delete this log?"
+                    centered
+                  >
+                    <div className="flex justify-end space-x-4">
+                      <Button color="red" onClick={() => handleDelete(log.id)}>
+                        Delete
+                      </Button>
+                      <Button color="black" onClick={close}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </Modal>
+                </div>
+                <div className="text-sm text-gray-600 mb-2">
+                  Duration:&nbsp;
+                  {log.minutesLogged} minutes
+                </div>
+                <div className="text-sm text-gray-600 mb-2">
+                  Deep Work Level: {log.deepWorkLevel}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {new Date(log.logDate).toLocaleDateString()}
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </div>

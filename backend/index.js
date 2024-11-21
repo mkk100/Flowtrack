@@ -76,15 +76,16 @@ app.post("/posts", async (req, res) => {
   }
 });
 app.post("/deepWorkLogs", async (req, res) => {
-  console.log(req.body);
-  const { userId, description, minutesLogged, deepWorkLevel } = req.body;
+  const { userId, description, minutesLogged, deepWorkLevel, postId } =
+    req.body;
   try {
     const deepWorkLog = await prisma.deepWorkLog.create({
       data: {
         userId: userId.toString(),
         description: description,
-        minutesLogged: parseInt(minutesLogged),
+        minutesLogged: parseFloat(minutesLogged),
         deepWorkLevel: parseInt(deepWorkLevel),
+        postID: parseInt(postId),
       },
     });
     res.status(200).json(deepWorkLog);
@@ -205,6 +206,24 @@ app.get("/users/:username/groups", async (req, res) => {
     res
       .status(400)
       .json({ error: "can't retrieve the groups and memberships" });
+  }
+});
+app.delete("/deepWorkLogs/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deepWorkLog = await prisma.deepWorkLog.delete({
+      where: { id: id.toString() },
+    });
+
+    await prisma.post.deleteMany({
+      where: { id: deepWorkLog.postID },
+    });
+
+    res.status(200).json(deepWorkLog);
+  } catch {
+    res
+      .status(400)
+      .json({ error: "can't delete the deep work log and associated posts" });
   }
 });
 app.get("/users/:username/available-groups", async (req, res) => {

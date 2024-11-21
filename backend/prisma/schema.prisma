@@ -117,4 +117,5 @@ model DeepWorkLog {
   deepWorkLevel Int
   logDate       DateTime      @default(now())
   user          User            @relation(fields: [userId], references: [id])
+  postID        Int
 }
