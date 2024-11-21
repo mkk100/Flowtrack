@@ -93,6 +93,31 @@ app.post("/deepWorkLogs", async (req, res) => {
     res.status(400).json({ error: "can't save the deep work log data" });
   }
 });
+app.put("/deepWorkLogs/:id", async (req, res) => {
+  const { id } = req.params;
+  const { description, deepWorkLevel } = req.body;
+  try {
+    const deepWorkLog = await prisma.deepWorkLog.update({
+      where: { id: id.toString() },
+      data: {
+        description: description,
+        deepWorkLevel: parseInt(deepWorkLevel),
+      },
+    });
+
+    await prisma.post.updateMany({
+      where: { id: deepWorkLog.postID },
+      data: {
+        description: description,
+        deepWorkLevel: parseInt(deepWorkLevel),
+      },
+    });
+
+    res.status(200).json(deepWorkLog);
+  } catch {
+    res.status(400).json({ error: "can't update the deep work log data" });
+  }
+});
 app.get("/users/:username/deepWorkLogs", async (req, res) => {
   const { username } = req.params;
   try {

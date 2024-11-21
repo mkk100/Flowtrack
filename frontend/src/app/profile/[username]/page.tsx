@@ -3,7 +3,7 @@ import { DeepWorkLogs, UserProfile } from "@/app/interface";
 import { useUser } from "@clerk/nextjs";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Card, Divider, Modal } from "@mantine/core";
+import { Button, Card, Divider, Modal, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Image from "next/image";
@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 const ProfilePage = ({ params }: { params: { username: string } }) => {
   const { username } = params;
   const [opened, { open, close }] = useDisclosure(false);
+  const [openedEdit, { open: openEdit, close: closeEdit }] =
+    useDisclosure(false);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(
     null
   );
@@ -22,6 +24,8 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [followButton, setFollowButton] = useState(false);
   const [followingCount, setFollowingCount] = useState(0);
   const [deepWorkLogs, setDeepWorkLogs] = useState<DeepWorkLogs[]>();
+  const [description, setDescription] = useState("");
+  const [level, setLevel] = useState("");
   const handleFollow = async () => {
     try {
       await axios.post(
@@ -53,6 +57,17 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
     } catch (error) {
       console.error("Error unfollowing user:", error);
     }
+  };
+  const editLogs = async (id: string) => {
+    try {
+      await axios.put(`http://localhost:4000/deepWorkLogs/${id}`, {
+        description: description,
+        deepWorkLevel: level,
+      });
+    } catch (error) {
+      console.error("Error editing log:", error);
+    }
+    closeEdit();
   };
   useEffect(() => {
     const fetchFollower = async () => {
@@ -193,8 +208,40 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               >
                 <div className="flex justify-between ">
                   <div className="text-lg font-semibold text-gray-800 mb-3">
-                    {log.description}
+                    <div onClick={openEdit}>{log.description}</div>
                   </div>
+                  <Modal
+                    opened={openedEdit}
+                    onClose={closeEdit}
+                    title="Edit"
+                    centered
+                  >
+                    <div className="">
+                      <TextInput
+                        label="Title"
+                        placeholder="Edit Description"
+                        required
+                        className="mb-4"
+                        defaultValue={log.description}
+                        onChange={(event) =>
+                          setDescription(event.currentTarget.value)
+                        }
+                      />
+                      <TextInput
+                        label="Description"
+                        placeholder="Edit Deep Work Level"
+                        required
+                        className="mb-4"
+                        defaultValue={log.deepWorkLevel}
+                        onChange={(event) =>
+                          setLevel(event.currentTarget.value)
+                        }
+                      />
+                    </div>
+                    <Button color="black" onClick={() => editLogs(log.id)}>
+                      Edit
+                    </Button>
+                  </Modal>
                   <FontAwesomeIcon
                     icon={faTrashCan}
                     onClick={open}
