@@ -303,9 +303,11 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                   withBorder
                   className="bg-gray-50 hover:shadow-lg transition-shadow duration-300 min-w-[300px]"
                 >
-                  <div className="flex justify-between ">
+                  <div className="flex justify-between max-h-32">
                     <div className="text-lg font-semibold text-gray-800 mb-3">
-                      <div onClick={openEdit}>{log.description}</div>
+                      <div onClick={openEdit} className="max-w-4">
+                        {log.description}
+                      </div>
                     </div>
                     <Modal
                       opened={openedEdit}
