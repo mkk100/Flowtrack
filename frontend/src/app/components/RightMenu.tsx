@@ -59,7 +59,7 @@ export default function RightMenu() {
               </Button>
             </Link>
             <Link href="/sign-up">
-              <Button variant="filled">Register</Button>
+              <Button variant="filled" color="black">Register</Button>
             </Link>
           </div>
         </SignedOut>

@@ -169,6 +169,42 @@ app.post("/groups", async (req, res) => {
     res.status(400).json({ error: "can't save the group data" });
   }
 });
+app.delete("/groups/:groupId", async (req, res) => {
+  const { groupId } = req.params;
+  try {
+    await prisma.groupMembership.deleteMany({
+      where: { groupId: groupId.toString() },
+    });
+
+    const group = await prisma.group.delete({
+      where: { id: groupId.toString() },
+    });
+
+    res.status(200).json(group);
+  } catch {
+    res.status(400).json({ error: "can't delete the group and memberships" });
+  }
+});
+app.get("/users/:username/isAdmin", async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const isAdmin = await prisma.group.findFirst({
+      where: { adminId: user.id.toString() },
+    });
+
+    res.status(200).json({ isAdmin: !!isAdmin });
+  } catch {
+    res.status(400).json({ error: "can't check admin status" });
+  }
+});
 app.post("/groups/:groupId/memberships", async (req, res) => {
   const { groupId } = req.params;
   const { userName } = req.body;
