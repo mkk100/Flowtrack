@@ -3,8 +3,13 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const cors = require("cors");
 const app = express();
-app.use(cors());
+const { createClerkClient } = require("@clerk/backend");
 
+const clerkClient = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
+
+app.use(cors());
 app.use(express.json());
 
 // cors
@@ -176,6 +181,7 @@ app.post("/groups", async (req, res) => {
     res.status(400).json({ error: "can't save the group data" });
   }
 });
+
 app.delete("/groups/:groupId", async (req, res) => {
   const { groupId } = req.params;
   try {
@@ -190,6 +196,60 @@ app.delete("/groups/:groupId", async (req, res) => {
     res.status(200).json(group);
   } catch {
     res.status(400).json({ error: "can't delete the group and memberships" });
+  }
+});
+app.delete("/users/:username", async (req, res) => {
+  const { username } = req.params;
+  try {
+    const user = await prisma.user.findUnique({
+      where: { username: username },
+    });
+
+    await prisma.groupMembership.deleteMany({
+      where: { userId: user.id.toString() },
+    });
+    await prisma.groupMembership.deleteMany({
+      where: {
+        groupId: {
+          in: (
+            await prisma.group.findMany({
+              where: { adminId: user.id.toString() },
+              select: { id: true },
+            })
+          ).map((group) => group.id.toString()),
+        },
+      },
+    });
+    await prisma.group.deleteMany({
+      where: { adminId: user.id.toString() },
+    });
+
+    await prisma.deepWorkLog.deleteMany({
+      where: { userId: user.id.toString() },
+    });
+
+    await prisma.post.deleteMany({
+      where: { userId: user.id.toString() },
+    });
+
+    await prisma.follow.deleteMany({
+      where: {
+        OR: [
+          { followerId: user.id.toString() },
+          { followingId: user.id.toString() },
+        ],
+      },
+    });
+
+    const userDel = await prisma.user.delete({
+      where: { id: user.id.toString() },
+    });
+    await clerkClient.users.deleteUser(user.id.toString());
+
+    res.status(200).json(userDel);
+  } catch (error) {
+    console.error("Error deleting user and related data:", error);
+    res.status(400).json({ error: "can't delete the user and related data" });
   }
 });
 app.get("/users/:username/groups/:groupId", async (req, res) => {

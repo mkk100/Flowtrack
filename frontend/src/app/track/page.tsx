@@ -66,10 +66,8 @@ const Timer: React.FC = () => {
         level: level,
         duration: Math.floor(seconds / 60),
       });
-      console.log("Post submitted successfully:", response.data);
 
       const postId = response.data.id;
-      console.log(postId);
       try {
         const response2 = await axios.post(
           "http://localhost:4000/deepWorkLogs",
@@ -81,7 +79,6 @@ const Timer: React.FC = () => {
             postId: postId,
           }
         );
-        console.log("Deep work log submitted successfully:", response2.status);
       } catch (error) {
         console.error("Error submitting deep work log:", error);
       }
@@ -139,7 +136,7 @@ const Timer: React.FC = () => {
         <Button
           color="black"
           onClick={() => {
-            if (seconds >= 2) {
+            if (seconds >= 60) {
               submitPost();
             } else {
               alert("Session must be at least 1 minute long to post.");
