@@ -38,6 +38,15 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [followButton, setFollowButton] = useState(false);
   const [followingCount, setFollowingCount] = useState(0);
   const [deepWorkLogs, setDeepWorkLogs] = useState<DeepWorkLogs[]>();
+  const handleDeleteAccount = async () => {
+    try {
+      //await axios.delete(`http://localhost:4000/users/${user?.username}`);
+      
+      router.push("/");
+    } catch (error) {
+      console.error("Error deleting account:", error);
+    }
+  };
   const handleFollow = async () => {
     try {
       await axios.post(
