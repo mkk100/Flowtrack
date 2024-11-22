@@ -1,8 +1,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
-import { clerkClient, WebhookEvent } from "@clerk/nextjs/server";
+import { WebhookEvent } from "@clerk/nextjs/server";
 import axios from "axios";
-import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
@@ -77,15 +76,4 @@ export async function POST(req: Request) {
     }
   }
   return new Response("Webhook received", { status: 200 });
-}
-
-export async function DELETE(userId: string) {
-  try {
-    const client = await clerkClient()
-    await client.users.deleteUser(userId)
-    return NextResponse.json({ message: 'User deleted' })
-  } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: 'Error deleting user' })
-  }
 }
