@@ -69,16 +69,13 @@ const Timer: React.FC = () => {
 
       const postId = response.data.id;
       try {
-        const response2 = await axios.post(
-          "http://localhost:4000/deepWorkLogs",
-          {
-            userId: userId?.id,
-            description: description,
-            minutesLogged: Math.floor(seconds / 60),
-            deepWorkLevel: level,
-            postId: postId,
-          }
-        );
+        await axios.post("http://localhost:4000/deepWorkLogs", {
+          userId: userId?.id,
+          description: description,
+          minutesLogged: Math.floor(seconds / 60),
+          deepWorkLevel: level,
+          postId: postId,
+        });
       } catch (error) {
         console.error("Error submitting deep work log:", error);
       }

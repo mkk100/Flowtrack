@@ -12,7 +12,7 @@ import { Button, Card, Divider, Modal, Select, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {

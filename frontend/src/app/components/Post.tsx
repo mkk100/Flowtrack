@@ -1,6 +1,4 @@
-import { useEffect } from "react";
 import type { PostSchema } from "../interface";
-import axios from "axios";
 import Image from "next/image";
 
 const Post = (post: PostSchema) => {
