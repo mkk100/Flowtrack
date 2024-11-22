@@ -139,7 +139,7 @@ const Timer: React.FC = () => {
         <Button
           color="black"
           onClick={() => {
-            if (seconds >= 2) {
+            if (seconds >= 60) {
               submitPost();
             } else {
               alert("Session must be at least 1 minute long to post.");
