@@ -1,12 +1,6 @@
 import {
   IconBook,
-  IconBrandSuperhuman,
-  IconCircleDotted,
-  IconContract,
-  IconFileCode,
-  IconFlame,
   IconFrustum,
-  IconReceiptOff,
   IconUserCheck,
   IconUsersGroup,
 } from "@tabler/icons-react";
@@ -19,6 +13,7 @@ import {
   Title,
 } from "@mantine/core";
 import classes from "./FeaturesTitle.module.css";
+import { useRouter } from "next/navigation";
 
 const features = [
   {
@@ -42,11 +37,12 @@ const features = [
   {
     icon: IconFrustum,
     title: "Coming Soon",
-    description: "Deep Work Logs analytics, messaging capabilities.",
+    description: "Deep Work Logs analytics",
   },
 ];
 
 export function LandingPage() {
+  const router = useRouter();
   const items = features.map((feature) => (
     <div key={feature.title}>
       <ThemeIcon
@@ -84,6 +80,8 @@ export function LandingPage() {
             size="lg"
             radius="md"
             mt="xl"
+            component="a"
+            onClick={() => router.push("/sign-in")}
           >
             Get started
           </Button>
