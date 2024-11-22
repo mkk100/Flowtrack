@@ -36,7 +36,7 @@ const features = [
   },
   {
     icon: IconFrustum,
-    title: "Coming Soon",
+    title: "Tentative Future Features",
     description: "Deep Work Logs analytics",
   },
 ];
