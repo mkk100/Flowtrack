@@ -44,7 +44,6 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
         const response = await axios.get(
           `http://localhost:4000/users/${user?.username}/groups/${params.groupId}`
         );
-        console.log(isAdmin);
         setIsAdmin(response.data.isAdmin);
       } catch (error) {
         console.error("Error fetching data:", error);

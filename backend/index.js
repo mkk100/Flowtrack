@@ -204,12 +204,10 @@ app.delete("/users/:username", async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { username: username },
     });
-    console.log("User found:", user);
 
     const mbrs = await prisma.groupMembership.deleteMany({
       where: { userId: user.id.toString() },
     });
-    console.log("Group memberships deleted:", mbrs);
     const gms = await prisma.groupMembership.deleteMany({
       where: {
         groupId: {
@@ -222,21 +220,17 @@ app.delete("/users/:username", async (req, res) => {
         },
       },
     });
-    console.log("Group memberships deleted:", gms);
     const grp = await prisma.group.deleteMany({
       where: { adminId: user.id.toString() },
     });
-    console.log("Groups deleted:", grp);
 
     const dwl = await prisma.deepWorkLog.deleteMany({
       where: { userId: user.id.toString() },
     });
-    console.log("Deep work logs deleted:", dwl);
 
     const post = await prisma.post.deleteMany({
       where: { userId: user.id.toString() },
     });
-    console.log("Posts deleted:", post);
 
     const follow = await prisma.follow.deleteMany({
       where: {
@@ -246,12 +240,10 @@ app.delete("/users/:username", async (req, res) => {
         ],
       },
     });
-    console.log("Follows deleted:", follow);
 
     const userDel = await prisma.user.delete({
       where: { id: user.id.toString() },
     });
-    console.log("User deleted:", userDel);
     await clerkClient.users.deleteUser(user.id.toString());
 
     res.status(200).json(userDel);

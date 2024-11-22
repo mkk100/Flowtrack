@@ -24,6 +24,10 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
     useDisclosure(false);
   const [openedFollowing, { open: openFollowing, close: closeFollowing }] =
     useDisclosure(false);
+  const [
+    openedDeleteAccount,
+    { open: openDeleteAccount, close: closeDeleteAccount },
+  ] = useDisclosure(false);
   const [currentProfile, setCurrentProfile] = useState<UserProfile | null>(
     null
   );
@@ -41,7 +45,6 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const handleDeleteAccount = async () => {
     try {
       //await axios.delete(`http://localhost:4000/users/${user?.username}`);
-      
       router.push("/");
     } catch (error) {
       console.error("Error deleting account:", error);
@@ -97,7 +100,6 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         `http://localhost:4000/users/followers/` + currentProfile?.id
       );
       const followers = response.data;
-      console.log(followers);
       setFollowerCount(followers["followers"].length);
       setFollower(followers["followers"]);
     };
@@ -106,7 +108,6 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
         `http://localhost:4000/users/following/` + currentProfile?.id
       );
       const following = response.data;
-      console.log(following);
       setFollowingCount(following["followings"].length);
       setFollowing(following["followings"]);
     };
@@ -115,7 +116,6 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
       const response = await axios.get(
         `http://localhost:4000/users/${username}/deepWorkLogs`
       );
-      console.log(response.data);
       setDeepWorkLogs(response.data);
     };
     const checkOwner = async () => {
@@ -190,7 +190,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
           height={150}
         />
         <div className="pl-16">
-          <div className="text-2xl capitalize pb-4 flex gap-4">
+          <div className="text-2xl pb-4 flex gap-4">
             <div>{currentProfile.username}</div>
             <div>
               {followButton &&
@@ -214,13 +214,17 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                 ))}
             </div>
           </div>
-          <div className="flex justify-between gap-8 text-base">
+          <div className="flex gap-12 text-base">
             <div>
-              <span className="font-bold">{deepWorkLogs?.length} </span> logs
+              <span className="font-bold">
+                {deepWorkLogs?.length}&nbsp;logs
+              </span>
             </div>
             <div>
               <div onClick={openFollowing}>
-                <span className="font-bold">{followingCount} </span> following
+                <span className="font-bold">
+                  {followingCount}&nbsp;following
+                </span>
               </div>
             </div>
             <Modal
@@ -232,7 +236,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               className="max-w-4 max-h-4"
             >
               <div className="flex flex-col gap-4">
-                <div className="">
+                <div className="overflow-x-auto">
                   {following?.map((followingPerson) => (
                     <div
                       key={
@@ -248,7 +252,10 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                         width={50}
                         height={50}
                       />
-                      <div onClick={() => handleUrl(followingPerson.username)}>
+                      <div
+                        onClick={() => handleUrl(followingPerson.username)}
+                        className="cursor-pointer"
+                      >
                         {followingPerson.username}
                       </div>
                     </div>
@@ -258,8 +265,9 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
             </Modal>
             <div>
               <div onClick={openFollower}>
-                <span className="font-bold">{followerCount} </span>
-                followers
+                <span className="font-bold">
+                  {followerCount}&nbsp;followers
+                </span>
               </div>
             </div>
             <Modal
@@ -270,11 +278,11 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               size="sm"
             >
               <div className="flex flex-col gap-4">
-                <div className="flex overflow-x-auto space-x-4">
+                <div className="overflow-x-auto">
                   {follower?.map((follower) => (
                     <div
                       key={follower.followerId + follower.username}
-                      className="flex-shrink-0 flex items-center space-x-2"
+                      className="flex-shrink-0 flex items-center space-x-2 mb-4"
                     >
                       <Image
                         loader={() => follower.avatar}
@@ -284,7 +292,10 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                         width={50}
                         height={50}
                       />
-                      <div onClick={() => handleUrl(follower.username)}>
+                      <div
+                        onClick={() => handleUrl(follower.username)}
+                        className="cursor-pointer"
+                      >
                         {follower.username}
                       </div>
                     </div>
@@ -293,6 +304,30 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
               </div>
             </Modal>
           </div>
+        </div>
+        <div className="flex justify-end w-full">
+          {isOwner && (
+            <div className="mr-12">
+              <Button onClick={openDeleteAccount} className="h-8" color="red">
+                Delete Account
+              </Button>
+              <Modal
+                opened={openedDeleteAccount}
+                onClose={closeDeleteAccount}
+                title="Are you sure you want to delete your account?"
+                centered
+              >
+                <div className="flex justify-end space-x-4">
+                  <Button color="red" onClick={handleDeleteAccount}>
+                    Delete
+                  </Button>
+                  <Button color="black" onClick={closeDeleteAccount}>
+                    Cancel
+                  </Button>
+                </div>
+              </Modal>
+            </div>
+          )}
         </div>
       </div>
       <Divider className="w-11/12" />
@@ -313,10 +348,8 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                   className="bg-gray-50 hover:shadow-lg transition-shadow duration-300 min-w-[300px]"
                 >
                   <div className="flex justify-between max-h-32">
-                    <div className="text-lg font-semibold text-gray-800 mb-3">
-                      <div onClick={openEdit} className="max-w-4">
-                        {log.description}
-                      </div>
+                    <div className="text-lg font-semibold text-gray-800 mb-3 break-words">
+                      <div onClick={openEdit}>{log.description}</div>
                     </div>
                     <Modal
                       opened={openedEdit && isOwner}
