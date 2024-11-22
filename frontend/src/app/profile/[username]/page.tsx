@@ -349,7 +349,9 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                 >
                   <div className="flex justify-between max-h-32">
                     <div className="text-lg font-semibold text-gray-800 mb-3 break-words">
-                      <div onClick={openEdit}>{log.description}</div>
+                      <div onClick={openEdit} className="max-w-48">
+                        {log.description}
+                      </div>
                     </div>
                     <Modal
                       opened={openedEdit && isOwner}
