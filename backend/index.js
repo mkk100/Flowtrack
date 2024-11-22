@@ -205,10 +205,10 @@ app.delete("/users/:username", async (req, res) => {
       where: { username: username },
     });
 
-    const mbrs = await prisma.groupMembership.deleteMany({
+    await prisma.groupMembership.deleteMany({
       where: { userId: user.id.toString() },
     });
-    const gms = await prisma.groupMembership.deleteMany({
+    await prisma.groupMembership.deleteMany({
       where: {
         groupId: {
           in: (
@@ -220,19 +220,19 @@ app.delete("/users/:username", async (req, res) => {
         },
       },
     });
-    const grp = await prisma.group.deleteMany({
+    await prisma.group.deleteMany({
       where: { adminId: user.id.toString() },
     });
 
-    const dwl = await prisma.deepWorkLog.deleteMany({
+    await prisma.deepWorkLog.deleteMany({
       where: { userId: user.id.toString() },
     });
 
-    const post = await prisma.post.deleteMany({
+    await prisma.post.deleteMany({
       where: { userId: user.id.toString() },
     });
 
-    const follow = await prisma.follow.deleteMany({
+    await prisma.follow.deleteMany({
       where: {
         OR: [
           { followerId: user.id.toString() },

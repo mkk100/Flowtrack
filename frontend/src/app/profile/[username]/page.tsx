@@ -12,7 +12,7 @@ import { Button, Card, Divider, Modal, Select, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import axios from "axios";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const ProfilePage = ({ params }: { params: { username: string } }) => {
@@ -44,8 +44,8 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [deepWorkLogs, setDeepWorkLogs] = useState<DeepWorkLogs[]>();
   const handleDeleteAccount = async () => {
     try {
-      //await axios.delete(`http://localhost:4000/users/${user?.username}`);
-      router.push("/");
+      await axios.delete(`http://localhost:4000/users/${user?.username}`);
+      router.push("/sign-in");
     } catch (error) {
       console.error("Error deleting account:", error);
     }
