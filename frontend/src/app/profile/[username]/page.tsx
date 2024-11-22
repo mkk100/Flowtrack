@@ -310,7 +310,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
                       </div>
                     </div>
                     <Modal
-                      opened={openedEdit}
+                      opened={openedEdit && isOwner}
                       onClose={closeEdit}
                       title="Edit Log"
                       centered

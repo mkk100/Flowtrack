@@ -176,6 +176,7 @@ app.post("/groups", async (req, res) => {
     res.status(400).json({ error: "can't save the group data" });
   }
 });
+
 app.delete("/groups/:groupId", async (req, res) => {
   const { groupId } = req.params;
   try {
