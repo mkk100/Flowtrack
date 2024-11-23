@@ -18,7 +18,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Headers", "Content-Type", "Authorization");
   next();
 });
-app.get("/test", (req, res) => {
+app.get("/", (req, res) => {
   res.json("test ok");
 });
 app.get("/users/:username", async (req, res) => {
