@@ -446,7 +446,7 @@ app.get("/groups/:groupId", async (req, res) => {
   }
 });
 app.get("/addAdmin", async (req, res) => {
-  const { user } = req.body;
+  res.json("test");
 });
 app.post("/users/follow", async (req, res) => {
   const { id, followingId } = req.body;
