@@ -445,9 +445,7 @@ app.get("/groups/:groupId", async (req, res) => {
     res.status(400).json({ error: "can't retrieve the group" });
   }
 });
-app.get("/addAdmin", async (req, res) => {
-  res.json("test");
-});
+
 app.post("/users/follow", async (req, res) => {
   const { id, followingId } = req.body;
   try {
