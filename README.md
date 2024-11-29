@@ -5,7 +5,7 @@ Flowtrack is a social platform for knowledge workers to track and share their de
 ## Features
 
 ### Current Features
-- **Main Feed: **
+- **Main Feed:**
 ![Screenshot 2024-11-29 at 1 09 20 PM](https://github.com/user-attachments/assets/380cb19f-bb2b-4f42-8d1a-7a2b7bc3d520)
 
 
