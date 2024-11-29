@@ -39,8 +39,8 @@ DeepWorkTracker is a social platform for knowledge workers to track and share th
 
 ### DevOps
 
-- **Hosting:** TBD (e.g., Vercel, AWS, DigitalOcean)
-- **Database Hosting:** TBD (e.g., Supabase, RDS)
+- **Hosting:** Railway
+- **Database Hosting:** Railway (MySQL)
 
 ---
 
