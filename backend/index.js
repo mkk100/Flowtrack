@@ -9,19 +9,25 @@ const clerkClient = createClerkClient({
   secretKey: process.env.CLERK_SECRET_KEY,
 });
 
-app.use(cors());
+// cors
+const allowedOrigins = [
+  "https://www.flowtrack.tech",
+  "https://flowtrack.tech",
+  "http://localhost:3000",
+];
+
+let corsOptions = {
+  origin: allowedOrigins,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
-// cors
 app.use((req, res, next) => {
-  res.header(
-    "Access-Control-Allow-Origin",
-    "https://www.flowtrack.tech" ||
-      "flowtrack.tech" ||
-      "www.flowtrack.tech" ||
-      "https://flowtrack.tech"
-  );
-  res.header("Access-Control-Allow-Headers", "Content-Type", "Authorization");
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 app.get("/", (req, res) => {
