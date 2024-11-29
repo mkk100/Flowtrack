@@ -44,7 +44,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const [deepWorkLogs, setDeepWorkLogs] = useState<DeepWorkLogs[]>();
   const handleDeleteAccount = async () => {
     try {
-      await axios.delete(`http://localhost:4000/users/${user?.username}`);
+      await axios.delete(`${process.env.BACKEND_URL}/users/${user?.username}`);
       router.push("/sign-in");
     } catch (error) {
       console.error("Error deleting account:", error);
@@ -53,7 +53,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   const handleFollow = async () => {
     try {
       await axios.post(
-        `http://localhost:4000/users/follow`,
+        `${process.env.BACKEND_URL}/users/follow`,
         {
           id: currentUser?.id,
           followingId: currentProfile?.id,
@@ -72,7 +72,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
 
   const handleUnfollow = async () => {
     try {
-      await axios.delete(`http://localhost:4000/users/unfollow`, {
+      await axios.delete(`${process.env.BACKEND_URL}/users/unfollow`, {
         data: {
           id: currentUser?.id,
           followingId: currentProfile?.id,
@@ -85,7 +85,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   };
   const editLogs = async (id: string, description: string, level: string) => {
     try {
-      await axios.put(`http://localhost:4000/deepWorkLogs/${id}`, {
+      await axios.put(`${process.env.BACKEND_URL}/deepWorkLogs/${id}`, {
         description: description,
         deepWorkLevel: level,
       });
@@ -97,7 +97,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   useEffect(() => {
     const fetchFollower = async () => {
       const response = await axios.get(
-        `http://localhost:4000/users/followers/` + currentProfile?.id
+        `${process.env.BACKEND_URL}/users/followers/` + currentProfile?.id
       );
       const followers = response.data;
       setFollowerCount(followers["followers"].length);
@@ -105,7 +105,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
     };
     const fetchFollowing = async () => {
       const response = await axios.get(
-        `http://localhost:4000/users/following/` + currentProfile?.id
+        `${process.env.BACKEND_URL}/users/following/` + currentProfile?.id
       );
       const following = response.data;
       setFollowingCount(following["followings"].length);
@@ -114,7 +114,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
 
     const fetchDeepWorkLogs = async () => {
       const response = await axios.get(
-        `http://localhost:4000/users/${username}/deepWorkLogs`
+        `${process.env.BACKEND_URL}/users/${username}/deepWorkLogs`
       );
       setDeepWorkLogs(response.data);
     };
@@ -136,11 +136,11 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        `http://localhost:4000/users/${username}`
+        `${process.env.BACKEND_URL}/users/${username}`
       );
       setCurrentProfile(response.data);
       const secondResponse = await axios.get(
-        `http://localhost:4000/users/${user?.username}`
+        `${process.env.BACKEND_URL}/users/${user?.username}`
       );
       setCurrentUser(secondResponse.data);
     };
@@ -150,7 +150,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
     const fetchData = async () => {
       if (user?.username !== username) {
         const thirdResponse = await axios.get(
-          `http://localhost:4000/users/followed/` +
+          `${process.env.BACKEND_URL}/users/followed/` +
             user?.username +
             `/` +
             username
@@ -165,7 +165,7 @@ const ProfilePage = ({ params }: { params: { username: string } }) => {
   }, [followed, user?.username, username]);
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:4000/deepWorkLogs/${id}`);
+      await axios.delete(`${process.env.BACKEND_URL}/deepWorkLogs/${id}`);
       setDeepWorkLogs((prev) => prev?.filter((log) => log.id !== id));
     } catch (error) {
       console.error("Error deleting log:", error);

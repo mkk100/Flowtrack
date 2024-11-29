@@ -19,14 +19,14 @@ export default function GroupViewLists() {
     router.push(`/group/${groupId}`);
   };
   const handleJoinGroup = async (groupId: string) => {
-    await axios.post(`http://localhost:4000/groups/${groupId}/memberships`, {
+    await axios.post(`${process.env.BACKEND_URL}/groups/${groupId}/memberships`, {
       userName: user?.username,
     });
     close();
     handleRowClick(groupId);
   };
   const handleUnjoinGroup = async (groupId: string) => {
-    await axios.delete(`http://localhost:4000/groups/${groupId}/memberships`, {
+    await axios.delete(`${process.env.BACKEND_URL}/groups/${groupId}/memberships`, {
       data: { userName: user?.username },
     });
     location.reload();
@@ -36,12 +36,12 @@ export default function GroupViewLists() {
       try {
         if (user) {
           const response = await axios.get(
-            `http://localhost:4000/users/${user.username}/groups`
+            `${process.env.BACKEND_URL}/users/${user.username}/groups`
           );
           setJoinedGroups(response.data);
 
           const response2 = await axios.get(
-            `http://localhost:4000/users/${user.username}/available-groups`
+            `${process.env.BACKEND_URL}/users/${user.username}/available-groups`
           );
           setUnjoinedGroups(response2.data);
         }

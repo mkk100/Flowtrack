@@ -12,7 +12,7 @@ export default function Home() {
   useEffect(() => {
     if (!user) return;
     axios
-      .get(`http://localhost:4000/posts/${user?.username}`)
+      .get(`${process.env.BACKEND_URL}/posts/${user?.username}`)
       .then((response) => {
         setPosts(response.data);
       });

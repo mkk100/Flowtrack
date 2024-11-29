@@ -35,7 +35,7 @@ const Timer: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const secondResponse = await axios.get(
-        `http://localhost:4000/users/${user?.username}`
+        `${process.env.BACKEND_URL}/users/${user?.username}`
       );
       setUserId(secondResponse.data);
     };
@@ -60,7 +60,7 @@ const Timer: React.FC = () => {
 
   const submitPost = async () => {
     try {
-      const response = await axios.post("http://localhost:4000/posts", {
+      const response = await axios.post(`${process.env.BACKEND_URL}/posts`, {
         userId: userId?.id,
         description: description,
         level: level,
@@ -69,7 +69,7 @@ const Timer: React.FC = () => {
 
       const postId = response.data.id;
       try {
-        await axios.post("http://localhost:4000/deepWorkLogs", {
+        await axios.post(`${process.env.BACKEND_URL}/deepWorkLogs`, {
           userId: userId?.id,
           description: description,
           minutesLogged: Math.floor(seconds / 60),
