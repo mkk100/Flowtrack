@@ -1,7 +1,6 @@
 # Flowtrack
-
-Flowtrack is a social platform for knowledge workers to track and share their deep work sessions. It combines productivity tracking with social features like groups, leaderboards, and follower/following systems.
 ---
+Flowtrack is a social platform for knowledge workers to track and share their deep work sessions. It combines productivity tracking with social features like groups, leaderboards, and follower/following systems.
 
 ## Features
 
