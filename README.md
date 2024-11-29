@@ -34,7 +34,7 @@ DeepWorkTracker is a social platform for knowledge workers to track and share th
 
 - **Framework:** Node.js
 - **ORM:** [Prisma](https://www.prisma.io/)
-- **Database:** PostgreSQL or MySQL
+- **Database:** MySQL
 - **API:** REST or GraphQL
 
 ### DevOps
