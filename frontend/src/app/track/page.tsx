@@ -35,7 +35,7 @@ const Timer: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       const secondResponse = await axios.get(
-        `${process.env.BACKEND_URL}/users/${user?.username}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?.username}`
       );
       setUserId(secondResponse.data);
     };
@@ -60,22 +60,28 @@ const Timer: React.FC = () => {
 
   const submitPost = async () => {
     try {
-      const response = await axios.post(`${process.env.BACKEND_URL}/posts`, {
-        userId: userId?.id,
-        description: description,
-        level: level,
-        duration: Math.floor(seconds / 60),
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/posts`,
+        {
+          userId: userId?.id,
+          description: description,
+          level: level,
+          duration: Math.floor(seconds / 60),
+        }
+      );
 
       const postId = response.data.id;
       try {
-        await axios.post(`${process.env.BACKEND_URL}/deepWorkLogs`, {
-          userId: userId?.id,
-          description: description,
-          minutesLogged: Math.floor(seconds / 60),
-          deepWorkLevel: level,
-          postId: postId,
-        });
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/deepWorkLogs`,
+          {
+            userId: userId?.id,
+            description: description,
+            minutesLogged: Math.floor(seconds / 60),
+            deepWorkLevel: level,
+            postId: postId,
+          }
+        );
       } catch (error) {
         console.error("Error submitting deep work log:", error);
       }

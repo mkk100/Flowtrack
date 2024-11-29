@@ -26,7 +26,7 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [rowData, setRowData] = useState([]);
   const deleteGroup = async () => {
-    await axios.delete(`${process.env.BACKEND_URL}/groups/${params.groupId}`);
+    await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/groups/${params.groupId}`);
     router.push(`/group`);
   };
   useEffect(() => {
@@ -34,15 +34,15 @@ export default function ViewGroup({ params }: { params: { groupId: string } }) {
       if (!user) return;
       try {
         const info = await axios.get(
-          `${process.env.BACKEND_URL}/groups/${params.groupId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/groups/${params.groupId}`
         );
         setGroupInfo(info.data);
         const calculations = await axios.get(
-          `${process.env.BACKEND_URL}/deepWorkLogs/${params.groupId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/deepWorkLogs/${params.groupId}`
         );
         setRowData(calculations.data);
         const response = await axios.get(
-          `${process.env.BACKEND_URL}/users/${user?.username}/groups/${params.groupId}`
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${user?.username}/groups/${params.groupId}`
         );
         setIsAdmin(response.data.isAdmin);
       } catch (error) {

@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   if (eventType === "user.created") {
     try {
       const response = await axios.post(
-        `${process.env.BACKEND_URL}/users`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/users`,
         {
           id: evt.data.id,
           username: JSON.parse(body).data.username,

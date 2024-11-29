@@ -15,7 +15,7 @@ const GroupPage = () => {
   const { user } = useUser();
   const createGroup = async () => {
     try {
-      const response = await axios.post(`${process.env.BACKEND_URL}/groups`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/groups`, {
         groupName: groupName,
         groupDescription: groupDescription,
         user: user?.username,

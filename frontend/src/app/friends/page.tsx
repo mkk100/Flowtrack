@@ -11,7 +11,7 @@ export default function FriendsPage() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   useEffect(() => {
     if (!user) return
-    axios.get(`${process.env.BACKEND_URL}/users/suggested/${user?.username}`).then((response) => {
+    axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/users/suggested/${user?.username}`).then((response) => {
       setUsers(response.data);
     });
   }, [user, user?.username]);
