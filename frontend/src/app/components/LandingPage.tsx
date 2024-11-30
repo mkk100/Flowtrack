@@ -67,11 +67,12 @@ export function LandingPage() {
       <Grid gutter={80}>
         <Grid.Col span={{ base: 12, md: 5 }}>
           <Title className={classes.title} order={2}>
-            Social Platform for Knowledge Workers
+            Flowtrack
           </Title>
           <Text c="dimmed">
-            Track your deep work sessions, create and join groups to see how you
-            measure up against your friends and your group members.
+            Social platform for knowledge workers. Track your deep work
+            sessions, create and join groups to see how you measure up against
+            your friends and your group members.
           </Text>
 
           <Button
@@ -82,12 +83,17 @@ export function LandingPage() {
             mt="xl"
             component="a"
             onClick={() => router.push("/sign-in")}
+            style={{
+              display: "block",
+              marginLeft: "auto",
+              marginRight: "auto",
+            }}
           >
             Get started
           </Button>
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 7 }}>
-          <SimpleGrid cols={{ base: 1, md: 2 }} spacing={30}>
+          <SimpleGrid cols={2} spacing={30}>
             {items}
           </SimpleGrid>
         </Grid.Col>
