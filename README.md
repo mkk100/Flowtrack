@@ -43,7 +43,7 @@ Flowtrack is a social platform for knowledge workers to track and share their de
 - **API:** REST
 
 ### DevOps
-
+- **Frontend Hosting** Vercel
 - **Hosting:** Railway
 - **Database Hosting:** Railway (MySQL)
 
