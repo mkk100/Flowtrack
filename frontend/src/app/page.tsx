@@ -20,21 +20,29 @@ export default function Home() {
   return (
     <div>
       <SignedIn>
-        <div className="flex flex-col items-center pt-8">
-          <div
-            className="overflow-y-auto h-screen pb-20 pr-4"
-            style={{ width: "32rem" }}
-          >
-            <div className="w-full max-w-2xl">
-              {posts
-                .slice()
-                .reverse()
-                .map((post) => (
-                  <Post key={post.id} {...post} />
-                ))}
+        {posts.length > 0 ? (
+          <div className="flex flex-col items-center pt-8">
+            <div
+              className="overflow-y-auto h-screen pb-20 pr-4"
+              style={{ width: "32rem" }}
+            >
+              <div className="w-full max-w-2xl">
+                {posts
+                  .slice()
+                  .reverse()
+                  .map((post) => (
+                    <Post key={post.id} {...post} />
+                  ))}
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="text-center mt-8">
+            <p className="text-gray-500">
+              No posts available! Follow other users for more content!
+            </p>
+          </div>
+        )}
       </SignedIn>
       <SignedOut>
         <div className="flex flex-col items-center justify-center h-screen pb-32">

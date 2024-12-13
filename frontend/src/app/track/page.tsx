@@ -110,7 +110,11 @@ const Timer: React.FC = () => {
             onClick={toggle}
             color={isActive ? "yellow" : "black"}
           >
-            {isActive ? "Pause" : "Start"}
+            {!isActive && seconds === 0
+              ? "Start"
+              : !isActive && seconds > 0
+              ? "Resume"
+              : "Pause"}
           </Button>
           <Button className="button" onClick={reset} color="red">
             Reset
@@ -120,11 +124,10 @@ const Timer: React.FC = () => {
 
       <Modal opened={opened} onClose={close} title="Post" centered>
         <TextInput
-          label="Description"
-          placeholder="Deep Work Session #1"
+          label="Work Log Caption"
+          placeholder="Deep Work Session"
           style={{ marginBottom: "1rem" }}
           onChange={(event) => setDescription(event.currentTarget.value)}
-          required
         />
         <Select
           label="Deep Work Level"
@@ -134,7 +137,6 @@ const Timer: React.FC = () => {
           onChange={(value) => {
             setLevel(value !== null ? value : "1");
           }}
-          required
         />
         <Button
           color="black"
